@@ -1,11 +1,16 @@
-from ipaddress import IPv4Address
-from typing import Any
 from good_ass_pydantic_integrator import GAPIBaseModel
 from pydantic import ConfigDict, Field
+from typing import Any
+from ipaddress import IPv4Address
 
 class MetaTag(GAPIBaseModel):
     model_config = ConfigDict(extra='forbid')
     name: str
+    content: str
+
+class MetaTagsRdFaItem(GAPIBaseModel):
+    model_config = ConfigDict(extra='forbid')
+    property: str
     content: str
 
 class LinkTag(GAPIBaseModel):
@@ -18,7 +23,7 @@ class SeoMetadata(GAPIBaseModel):
     canonical_url: str = Field(..., alias='canonicalUrl')
     script_tags: list[None] = Field(..., alias='scriptTags')
     meta_tags: list[MetaTag] = Field(..., alias='metaTags')
-    meta_tags_rd_fa: list[None] = Field(..., alias='metaTagsRDFa')
+    meta_tags_rd_fa: list[MetaTagsRdFaItem] = Field(..., alias='metaTagsRDFa')
     title: str
     link_tags: list[LinkTag] = Field(..., alias='linkTags')
 
@@ -52,6 +57,7 @@ class SitewideInlineScriptsTop(GAPIBaseModel):
     page_type: str = Field(..., alias='pageType')
     sub_page_type: str = Field(..., alias='subPageType')
     page_type_id: str = Field(..., alias='pageTypeId')
+    service_worker_script_type: str | None = Field(None, alias='serviceWorkerScriptType')
 
 class SitewideInlineScriptsBottom(GAPIBaseModel):
     model_config = ConfigDict(extra='forbid')
@@ -67,6 +73,7 @@ class SitewideInlineScriptsBottom(GAPIBaseModel):
     page_type: str = Field(..., alias='pageType')
     sub_page_type: str = Field(..., alias='subPageType')
     page_type_id: str = Field(..., alias='pageTypeId')
+    service_worker_script_type: str | None = Field(None, alias='serviceWorkerScriptType')
 
 class SitewideHead(GAPIBaseModel):
     model_config = ConfigDict(extra='forbid')
@@ -98,10 +105,24 @@ class Metadata(GAPIBaseModel):
     model_config = ConfigDict(extra='forbid')
     availability: Availability
 
+class SiteLink(GAPIBaseModel):
+    model_config = ConfigDict(extra='forbid')
+    href: str
+
+class Attrs(GAPIBaseModel):
+    model_config = ConfigDict(extra='forbid')
+    site_link: SiteLink = Field(..., alias='siteLink')
+
+class Banner(GAPIBaseModel):
+    model_config = ConfigDict(extra='forbid')
+    attrs: Attrs
+    string: str
+
 class PangaeaBanner(GAPIBaseModel):
     model_config = ConfigDict(extra='forbid')
     csrf_token: str = Field(..., alias='csrfToken')
     metadata: Metadata
+    banner: Banner | None = None
 
 class Features(GAPIBaseModel):
     model_config = ConfigDict(extra='forbid')
@@ -290,6 +311,7 @@ class HighValueMessage(GAPIBaseModel):
     model_config = ConfigDict(extra='forbid')
     dv_message: DvMessage = Field(..., alias='dvMessage')
     icon: str
+    icon_type: str | None = Field(None, alias='iconType')
 
 class InformationalMessage(GAPIBaseModel):
     model_config = ConfigDict(extra='forbid')
@@ -389,7 +411,7 @@ class LogoComponent(GAPIBaseModel):
 
 class ComponentPayload1(GAPIBaseModel):
     model_config = ConfigDict(extra='forbid')
-    text_component: TextComponent | None = Field(None, alias='textComponent')
+    text_component: TextComponent = Field(..., alias='textComponent')
     logo_component: LogoComponent | None = Field(None, alias='logoComponent')
 
 class Header(GAPIBaseModel):
@@ -496,10 +518,10 @@ class LogoComponent1(GAPIBaseModel):
 
 class ComponentPayload4(GAPIBaseModel):
     model_config = ConfigDict(extra='forbid')
-    text_component: TextComponent3 | None = Field(None, alias='textComponent')
+    text_component: TextComponent3 = Field(..., alias='textComponent')
     logo_component: LogoComponent1 | None = Field(None, alias='logoComponent')
 
-class Banner(GAPIBaseModel):
+class Banner1(GAPIBaseModel):
     model_config = ConfigDict(extra='forbid')
     component_payload: ComponentPayload4 = Field(..., alias='componentPayload')
     component_primitive: str = Field(..., alias='componentPrimitive')
@@ -569,7 +591,7 @@ class RelatedBenefits(GAPIBaseModel):
 class Components1(GAPIBaseModel):
     model_config = ConfigDict(extra='forbid')
     transaction_detail: TransactionDetail1 = Field(..., alias='TRANSACTION_DETAIL')
-    banner: Banner = Field(..., alias='BANNER')
+    banner: Banner1 = Field(..., alias='BANNER')
     motivator_messaging: MotivatorMessaging1 | None = Field(None, alias='MOTIVATOR_MESSAGING')
     related_benefits: RelatedBenefits | None = Field(None, alias='RELATED_BENEFITS')
 
@@ -674,7 +696,7 @@ class CreativeItem(GAPIBaseModel):
     model_config = ConfigDict(extra='forbid')
     title_id: str = Field(..., alias='titleId')
 
-class Banner1(GAPIBaseModel):
+class Banner2(GAPIBaseModel):
     model_config = ConfigDict(extra='forbid')
     crow: dict[str, Any]
     ui: None
@@ -803,14 +825,16 @@ class PageContext(GAPIBaseModel):
 class Url(GAPIBaseModel):
     model_config = ConfigDict(extra='forbid')
     href: str
+    target: str | None = None
+    rel: str | None = None
 
-class Attrs(GAPIBaseModel):
+class Attrs1(GAPIBaseModel):
     model_config = ConfigDict(extra='forbid')
     url: Url
 
 class HelpText(GAPIBaseModel):
     model_config = ConfigDict(extra='forbid')
-    attrs: Attrs
+    attrs: Attrs1
     string: str
 
 class CopyLinkButton(GAPIBaseModel):
@@ -872,22 +896,26 @@ class ShareWidgetModel(GAPIBaseModel):
     localized_share: str = Field(..., alias='localizedShare')
     share_buttons: ShareButtons = Field(..., alias='shareButtons')
 
-class Attrs1(GAPIBaseModel):
+class Url1(GAPIBaseModel):
     model_config = ConfigDict(extra='forbid')
-    url: Url
-
-class TermsText(GAPIBaseModel):
-    model_config = ConfigDict(extra='forbid')
-    attrs: Attrs1
-    string: str
+    href: str
 
 class Attrs2(GAPIBaseModel):
     model_config = ConfigDict(extra='forbid')
-    url: Url
+    url: Url1
+
+class TermsText(GAPIBaseModel):
+    model_config = ConfigDict(extra='forbid')
+    attrs: Attrs2
+    string: str
+
+class Attrs3(GAPIBaseModel):
+    model_config = ConfigDict(extra='forbid')
+    url: Url1
 
 class WriteReviewText(GAPIBaseModel):
     model_config = ConfigDict(extra='forbid')
-    attrs: Attrs2
+    attrs: Attrs3
     string: str
 
 class BottomBar(GAPIBaseModel):
@@ -973,9 +1001,9 @@ class State(GAPIBaseModel):
     buy_box: dict[str, Any] = Field(..., alias='buyBox')
     buybox_title_id: list[BuyboxTitleIdItem] = Field(..., alias='buyboxTitleId')
     creative: list[CreativeItem]
-    banner: Banner1
+    banner: Banner2
     age_verification_banner: dict[str, Any] = Field(..., alias='ageVerificationBanner')
-    notification: list[NotificationItem]
+    notification: dict[str, Any] | list[NotificationItem]
     seasons: dict[str, Any] | list[Season]
     self: list[SelfItem]
     watchlist: list[WatchlistItem]
@@ -1458,7 +1486,7 @@ class ComponentPayload11(GAPIBaseModel):
     text_component: TextComponent7 | None = Field(None, alias='textComponent')
     logo_component: LogoComponent3 | None = Field(None, alias='logoComponent')
 
-class Banner2(GAPIBaseModel):
+class Banner3(GAPIBaseModel):
     model_config = ConfigDict(extra='forbid')
     component_payload: ComponentPayload11 = Field(..., alias='componentPayload')
     component_primitive: str = Field(..., alias='componentPrimitive')
@@ -1505,11 +1533,25 @@ class RelatedBenefits1(GAPIBaseModel):
     component_payload: ComponentPayload12 = Field(..., alias='componentPayload')
     component_primitive: str = Field(..., alias='componentPrimitive')
 
+class IconTextListComponent1(GAPIBaseModel):
+    model_config = ConfigDict(extra='forbid')
+    icon_text_list: list[IconTextListItem] = Field(..., alias='iconTextList')
+
+class ComponentPayload14(GAPIBaseModel):
+    model_config = ConfigDict(extra='forbid')
+    icon_text_list_component: IconTextListComponent1 = Field(..., alias='iconTextListComponent')
+
+class MotivatorMessaging2(GAPIBaseModel):
+    model_config = ConfigDict(extra='forbid')
+    component_payload: ComponentPayload14 = Field(..., alias='componentPayload')
+    component_primitive: str = Field(..., alias='componentPrimitive')
+
 class Components3(GAPIBaseModel):
     model_config = ConfigDict(extra='forbid')
     transaction_detail: TransactionDetail3 = Field(..., alias='TRANSACTION_DETAIL')
-    banner: Banner2 = Field(..., alias='BANNER')
+    banner: Banner3 = Field(..., alias='BANNER')
     related_benefits: RelatedBenefits1 | None = Field(None, alias='RELATED_BENEFITS')
+    motivator_messaging: MotivatorMessaging2 | None = Field(None, alias='MOTIVATOR_MESSAGING')
 
 class CardOption1(GAPIBaseModel):
     model_config = ConfigDict(extra='forbid')
@@ -1548,7 +1590,7 @@ class Action3(GAPIBaseModel):
     btf: dict[str, Any] | list[BtfItem]
     atf: dict[str, Any]
 
-class Banner3(GAPIBaseModel):
+class Banner4(GAPIBaseModel):
     model_config = ConfigDict(extra='forbid')
     crow: dict[str, Any]
     ui: None
@@ -1863,22 +1905,28 @@ class Metadatum1(GAPIBaseModel):
     maturity_rating: MaturityRating = Field(..., alias='maturityRating')
     traits: list[None] | None = None
 
-class Attrs3(GAPIBaseModel):
+class Attrs4(GAPIBaseModel):
     model_config = ConfigDict(extra='forbid')
-    url: Url
+    url: Url1
 
 class TermsText1(GAPIBaseModel):
     model_config = ConfigDict(extra='forbid')
-    attrs: Attrs3
+    attrs: Attrs4
     string: str
 
-class Attrs4(GAPIBaseModel):
+class Url4(GAPIBaseModel):
     model_config = ConfigDict(extra='forbid')
-    url: Url
+    href: str
+    target: str | None = None
+    rel: str | None = None
+
+class Attrs5(GAPIBaseModel):
+    model_config = ConfigDict(extra='forbid')
+    url: Url4
 
 class HelpText1(GAPIBaseModel):
     model_config = ConfigDict(extra='forbid')
-    attrs: Attrs4
+    attrs: Attrs5
     string: str
 
 class BottomMenu(GAPIBaseModel):
@@ -1897,7 +1945,7 @@ class State1(GAPIBaseModel):
     buy_box: dict[str, Any] = Field(..., alias='buyBox')
     buybox_title_id: dict[str, Any] = Field(..., alias='buyboxTitleId')
     creative: dict[str, Any]
-    banner: Banner3
+    banner: Banner4
     age_verification_banner: dict[str, Any] = Field(..., alias='ageVerificationBanner')
     notification: dict[str, Any]
     seasons: dict[str, Any]
@@ -2124,6 +2172,35 @@ class SearchBar(GAPIBaseModel):
     submit_search_destructured_endpoint: SubmitSearchDestructuredEndpoint = Field(..., alias='submitSearchDestructuredEndpoint')
     submit_search_endpoint: str = Field(..., alias='submitSearchEndpoint')
 
+class SubNode1(GAPIBaseModel):
+    model_config = ConfigDict(extra='forbid')
+    field__type: str = Field(..., alias='__type')
+    id: str
+    label: str
+    locale: str
+    ref_marker: str = Field(..., alias='refMarker')
+    url: str
+
+class SubMenuItem1(GAPIBaseModel):
+    model_config = ConfigDict(extra='forbid')
+    id: str
+    sub_nodes: list[SubNode1] = Field(..., alias='subNodes')
+
+class LanguageSelector(GAPIBaseModel):
+    model_config = ConfigDict(extra='forbid')
+    csrf_token: str = Field(..., alias='csrfToken')
+    id: str
+    label: str
+    nav_section: NavSection = Field(..., alias='navSection')
+    short_label: str = Field(..., alias='shortLabel')
+    sub_menu: list[SubMenuItem1] = Field(..., alias='subMenu')
+
+class ProfileSignInCoachmark(GAPIBaseModel):
+    model_config = ConfigDict(extra='forbid')
+    description: str
+    label: str
+    url: str
+
 class Nav(GAPIBaseModel):
     model_config = ConfigDict(extra='forbid')
     aria_label: str = Field(..., alias='ariaLabel')
@@ -2132,6 +2209,8 @@ class Nav(GAPIBaseModel):
     label: str
     navigation_nodes: list[NavigationNode] = Field(..., alias='navigationNodes')
     search_bar: SearchBar = Field(..., alias='searchBar')
+    language_selector: LanguageSelector | None = Field(None, alias='languageSelector')
+    profile_sign_in_coachmark: ProfileSignInCoachmark | None = Field(None, alias='profileSignInCoachmark')
 
 class SitewideNavigationBar1(GAPIBaseModel):
     model_config = ConfigDict(extra='forbid')
@@ -2170,6 +2249,36 @@ class SitewideAlexa(GAPIBaseModel):
     device_config_id: str = Field(..., alias='deviceConfigId')
     iframe_origin: str = Field(..., alias='iframeOrigin')
 
+class Link1(GAPIBaseModel):
+    model_config = ConfigDict(extra='forbid')
+    href: str
+    text: str
+
+class Metadata3(GAPIBaseModel):
+    model_config = ConfigDict(extra='forbid')
+    availability: Availability
+
+class Footer(GAPIBaseModel):
+    model_config = ConfigDict(extra='forbid')
+    copyright: str
+    links: list[Link1]
+    metadata: Metadata3
+
+class SitewideFooter(GAPIBaseModel):
+    model_config = ConfigDict(extra='forbid')
+    footer: Footer
+
+class Strings2(GAPIBaseModel):
+    model_config = ConfigDict(extra='forbid')
+    heading: str
+    content_list: str = Field(..., alias='contentList')
+    content: str
+
+class SitewideLanguageNotification(GAPIBaseModel):
+    model_config = ConfigDict(extra='forbid')
+    strings: Strings2
+    recently_launched_languages: dict[str, Any] = Field(..., alias='recentlyLaunchedLanguages')
+
 class Sitewide(GAPIBaseModel):
     model_config = ConfigDict(extra='forbid')
     sitewide_navigation_bar: SitewideNavigationBar1 = Field(..., alias='sitewide-navigation-bar')
@@ -2177,12 +2286,14 @@ class Sitewide(GAPIBaseModel):
     sitewide_inline_scripts_bottom: SitewideInlineScriptsBottom1 = Field(..., alias='sitewide-inline-scripts-bottom')
     sitewide_conditional: SitewideConditional = Field(..., alias='sitewide-conditional')
     sitewide_alexa: SitewideAlexa = Field(..., alias='sitewide-alexa')
+    sitewide_footer: SitewideFooter | None = Field(None, alias='sitewide-footer')
+    sitewide_language_notification: SitewideLanguageNotification | None = Field(None, alias='sitewide-language-notification')
 
 class Body(GAPIBaseModel):
     model_config = ConfigDict(extra='forbid')
     routing_type: str = Field(..., alias='routingType')
     page_classes: list[str] = Field(..., alias='pageClasses')
-    pangaea_banner: PangaeaBanner = Field(..., alias='pangaeaBanner')
+    pangaea_banner: PangaeaBanner | None = Field(None, alias='pangaeaBanner')
     atf: Atf
     btf: Btf1
     sitewide: Sitewide
@@ -2303,6 +2414,11 @@ class FeaturePivots(GAPIBaseModel):
     dv_web_linear_vmvpd_recording_card_1405557: bool = Field(..., alias='DV_WEB_LINEAR_VMVPD_RECORDING_CARD_1405557')
     dv_web_title_rating_experiment_1374850: str = Field(..., alias='DV_WEB_TITLE_RATING_EXPERIMENT_1374850')
     pv_web_lighthouse_1438707: bool = Field(..., alias='PV_WEB_LIGHTHOUSE_1438707')
+    can_fetch_guest_customer_migration_payload: bool | None = Field(None, alias='canFetchGuestCustomerMigrationPayload')
+    can_provision_guest_customer: bool | None = Field(None, alias='canProvisionGuestCustomer')
+    can_migrate_guest_customer_data: bool | None = Field(None, alias='canMigrateGuestCustomerData')
+    guest_provision_requires_interaction: bool | None = Field(None, alias='guestProvisionRequiresInteraction')
+    handshake_required: bool | None = Field(None, alias='handshakeRequired')
 
 class Resiliency(GAPIBaseModel):
     model_config = ConfigDict(extra='forbid')
@@ -2317,7 +2433,7 @@ class GlobalStore(GAPIBaseModel):
     home_region: str = Field(..., alias='HomeRegion')
     feature_pivots: FeaturePivots = Field(..., alias='FeaturePivots')
     resiliency: Resiliency = Field(..., alias='Resiliency')
-    cross_domain_sso_url: None = Field(..., alias='CrossDomainSSOUrl')
+    cross_domain_sso_url: str | None = Field(..., alias='CrossDomainSSOUrl')
 
 class Config(GAPIBaseModel):
     model_config = ConfigDict(extra='forbid')

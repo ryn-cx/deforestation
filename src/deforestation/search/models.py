@@ -1,8 +1,8 @@
+from pydantic import ConfigDict, Field
+from good_ass_pydantic_integrator import GAPIBaseModel
+from typing import Any
 from datetime import timedelta
 from ipaddress import IPv4Address
-from typing import Any
-from good_ass_pydantic_integrator import GAPIBaseModel
-from pydantic import ConfigDict, Field
 
 class PageMetadata(GAPIBaseModel):
     model_config = ConfigDict(extra='forbid')
@@ -32,6 +32,7 @@ class SitewideInlineScriptsTop(GAPIBaseModel):
     include_smart_app_banner: bool = Field(..., alias='includeSmartAppBanner')
     page_type: str = Field(..., alias='pageType')
     sub_page_type: str = Field(..., alias='subPageType')
+    service_worker_script_type: str | None = Field(None, alias='serviceWorkerScriptType')
 
 class SitewideInlineScriptsBottom(GAPIBaseModel):
     model_config = ConfigDict(extra='forbid')
@@ -46,6 +47,7 @@ class SitewideInlineScriptsBottom(GAPIBaseModel):
     include_smart_app_banner: bool = Field(..., alias='includeSmartAppBanner')
     page_type: str = Field(..., alias='pageType')
     sub_page_type: str = Field(..., alias='subPageType')
+    service_worker_script_type: str | None = Field(None, alias='serviceWorkerScriptType')
 
 class SitewideHead(GAPIBaseModel):
     model_config = ConfigDict(extra='forbid')
@@ -486,6 +488,35 @@ class SearchBar(GAPIBaseModel):
     submit_search_destructured_endpoint: SubmitSearchDestructuredEndpoint = Field(..., alias='submitSearchDestructuredEndpoint')
     submit_search_endpoint: str = Field(..., alias='submitSearchEndpoint')
 
+class SubNode1(GAPIBaseModel):
+    model_config = ConfigDict(extra='forbid')
+    field__type: str = Field(..., alias='__type')
+    id: str
+    label: str
+    locale: str
+    ref_marker: str = Field(..., alias='refMarker')
+    url: str
+
+class SubMenuItem1(GAPIBaseModel):
+    model_config = ConfigDict(extra='forbid')
+    id: str
+    sub_nodes: list[SubNode1] = Field(..., alias='subNodes')
+
+class LanguageSelector(GAPIBaseModel):
+    model_config = ConfigDict(extra='forbid')
+    csrf_token: str = Field(..., alias='csrfToken')
+    id: str
+    label: str
+    nav_section: NavSection = Field(..., alias='navSection')
+    short_label: str = Field(..., alias='shortLabel')
+    sub_menu: list[SubMenuItem1] = Field(..., alias='subMenu')
+
+class ProfileSignInCoachmark(GAPIBaseModel):
+    model_config = ConfigDict(extra='forbid')
+    description: str
+    label: str
+    url: str
+
 class Nav(GAPIBaseModel):
     model_config = ConfigDict(extra='forbid')
     aria_label: str = Field(..., alias='ariaLabel')
@@ -494,6 +525,8 @@ class Nav(GAPIBaseModel):
     label: str
     navigation_nodes: list[NavigationNode] = Field(..., alias='navigationNodes')
     search_bar: SearchBar = Field(..., alias='searchBar')
+    language_selector: LanguageSelector | None = Field(None, alias='languageSelector')
+    profile_sign_in_coachmark: ProfileSignInCoachmark | None = Field(None, alias='profileSignInCoachmark')
 
 class SitewideNavigationBar1(GAPIBaseModel):
     model_config = ConfigDict(extra='forbid')
@@ -532,6 +565,36 @@ class SitewideAlexa(GAPIBaseModel):
     device_config_id: str = Field(..., alias='deviceConfigId')
     iframe_origin: str = Field(..., alias='iframeOrigin')
 
+class Link1(GAPIBaseModel):
+    model_config = ConfigDict(extra='forbid')
+    href: str
+    text: str
+
+class Metadata3(GAPIBaseModel):
+    model_config = ConfigDict(extra='forbid')
+    availability: Availability
+
+class Footer(GAPIBaseModel):
+    model_config = ConfigDict(extra='forbid')
+    copyright: str
+    links: list[Link1]
+    metadata: Metadata3
+
+class SitewideFooter(GAPIBaseModel):
+    model_config = ConfigDict(extra='forbid')
+    footer: Footer
+
+class Strings1(GAPIBaseModel):
+    model_config = ConfigDict(extra='forbid')
+    heading: str
+    content_list: str = Field(..., alias='contentList')
+    content: str
+
+class SitewideLanguageNotification(GAPIBaseModel):
+    model_config = ConfigDict(extra='forbid')
+    strings: Strings1
+    recently_launched_languages: dict[str, Any] = Field(..., alias='recentlyLaunchedLanguages')
+
 class Sitewide(GAPIBaseModel):
     model_config = ConfigDict(extra='forbid')
     sitewide_navigation_bar: SitewideNavigationBar1 = Field(..., alias='sitewide-navigation-bar')
@@ -539,6 +602,8 @@ class Sitewide(GAPIBaseModel):
     sitewide_inline_scripts_bottom: SitewideInlineScriptsBottom1 = Field(..., alias='sitewide-inline-scripts-bottom')
     sitewide_conditional: SitewideConditional = Field(..., alias='sitewide-conditional')
     sitewide_alexa: SitewideAlexa = Field(..., alias='sitewide-alexa')
+    sitewide_footer: SitewideFooter | None = Field(None, alias='sitewide-footer')
+    sitewide_language_notification: SitewideLanguageNotification | None = Field(None, alias='sitewide-language-notification')
 
 class Body(GAPIBaseModel):
     model_config = ConfigDict(extra='forbid')
@@ -677,6 +742,11 @@ class FeaturePivots(GAPIBaseModel):
     dv_web_linear_vmvpd_recording_card_1405557: bool = Field(..., alias='DV_WEB_LINEAR_VMVPD_RECORDING_CARD_1405557')
     dv_web_title_rating_experiment_1374850: str = Field(..., alias='DV_WEB_TITLE_RATING_EXPERIMENT_1374850')
     pv_web_lighthouse_1438707: bool = Field(..., alias='PV_WEB_LIGHTHOUSE_1438707')
+    can_fetch_guest_customer_migration_payload: bool | None = Field(None, alias='canFetchGuestCustomerMigrationPayload')
+    can_provision_guest_customer: bool | None = Field(None, alias='canProvisionGuestCustomer')
+    can_migrate_guest_customer_data: bool | None = Field(None, alias='canMigrateGuestCustomerData')
+    guest_provision_requires_interaction: bool | None = Field(None, alias='guestProvisionRequiresInteraction')
+    handshake_required: bool | None = Field(None, alias='handshakeRequired')
 
 class Resiliency(GAPIBaseModel):
     model_config = ConfigDict(extra='forbid')
@@ -691,7 +761,7 @@ class GlobalStore(GAPIBaseModel):
     home_region: str = Field(..., alias='HomeRegion')
     feature_pivots: FeaturePivots = Field(..., alias='FeaturePivots')
     resiliency: Resiliency = Field(..., alias='Resiliency')
-    cross_domain_sso_url: None = Field(..., alias='CrossDomainSSOUrl')
+    cross_domain_sso_url: str | None = Field(..., alias='CrossDomainSSOUrl')
 
 class Config(GAPIBaseModel):
     model_config = ConfigDict(extra='forbid')

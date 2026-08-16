@@ -1,6 +1,6 @@
-from typing import Any
 from good_ass_pydantic_integrator import GAPIBaseModel
 from pydantic import ConfigDict, Field
+from typing import Any
 
 class Availability(GAPIBaseModel):
     model_config = ConfigDict(extra='forbid')
@@ -77,14 +77,28 @@ class Transaction(GAPIBaseModel):
     purchase_data: PurchaseData = Field(..., alias='purchaseData')
     ref_marker: str = Field(..., alias='refMarker')
 
+class Subscription(GAPIBaseModel):
+    model_config = ConfigDict(extra='forbid')
+    app_fallback_url: str = Field(..., alias='appFallbackUrl')
+    app_subscription_url: str = Field(..., alias='appSubscriptionUrl')
+    benefit_id: str = Field(..., alias='benefitId')
+    channel_link: str = Field(..., alias='channelLink')
+    display_messages: list[None] = Field(..., alias='displayMessages')
+    label: str
+    problems: list[None]
+    ref_marker: str = Field(..., alias='refMarker')
+    s_type: str = Field(..., alias='sType')
+    signup_link: str = Field(..., alias='signupLink')
+
 class Payload1(GAPIBaseModel):
     model_config = ConfigDict(extra='forbid')
     payload_type: str = Field(..., alias='payloadType')
-    transaction: Transaction
+    transaction: Transaction | None = None
+    subscription: Subscription | None = None
 
 class Presentation(GAPIBaseModel):
     model_config = ConfigDict(extra='forbid')
-    icon: str
+    icon: str | None = None
     primary_label: str = Field(..., alias='primaryLabel')
     ref_marker: str = Field(..., alias='refMarker')
 
@@ -101,9 +115,21 @@ class TextComponent(GAPIBaseModel):
     text: str
     text_type: str = Field(..., alias='textType')
 
+class Tags(GAPIBaseModel):
+    model_config = ConfigDict(extra='forbid')
+    logo_height: str = Field(..., alias='LOGO_HEIGHT')
+    logo_entity_tag: str = Field(..., alias='LOGO_ENTITY_TAG')
+    logo_width: str = Field(..., alias='LOGO_WIDTH')
+
+class LogoComponent(GAPIBaseModel):
+    model_config = ConfigDict(extra='forbid')
+    tags: Tags
+    url: str
+
 class ComponentPayload(GAPIBaseModel):
     model_config = ConfigDict(extra='forbid')
-    text_component: TextComponent = Field(..., alias='textComponent')
+    text_component: TextComponent | None = Field(None, alias='textComponent')
+    logo_component: LogoComponent | None = Field(None, alias='logoComponent')
 
 class Header(GAPIBaseModel):
     model_config = ConfigDict(extra='forbid')
@@ -144,7 +170,8 @@ class Transaction1(GAPIBaseModel):
 class Payload2(GAPIBaseModel):
     model_config = ConfigDict(extra='forbid')
     payload_type: str = Field(..., alias='payloadType')
-    transaction: Transaction1
+    transaction: Transaction1 | None = None
+    subscription: Subscription | None = None
 
 class Action2(GAPIBaseModel):
     model_config = ConfigDict(extra='forbid')
@@ -153,20 +180,33 @@ class Action2(GAPIBaseModel):
     payload: Payload2
     presentation: Presentation
 
-class Tags(GAPIBaseModel):
+class Tags1(GAPIBaseModel):
     model_config = ConfigDict(extra='forbid')
     text_theme: str = Field(..., alias='TEXT_THEME')
     brand_glow: str = Field(..., alias='BRAND_GLOW')
 
 class TextComponent2(GAPIBaseModel):
     model_config = ConfigDict(extra='forbid')
-    tags: Tags
+    tags: Tags1
     text: str
     text_type: str = Field(..., alias='textType')
 
+class Tags2(GAPIBaseModel):
+    model_config = ConfigDict(extra='forbid')
+    logo_height: str = Field(..., alias='LOGO_HEIGHT')
+    logo_entity_tag: str = Field(..., alias='LOGO_ENTITY_TAG')
+    logo_width: str = Field(..., alias='LOGO_WIDTH')
+    brand_glow: str = Field(..., alias='BRAND_GLOW')
+
+class LogoComponent1(GAPIBaseModel):
+    model_config = ConfigDict(extra='forbid')
+    tags: Tags2
+    url: str
+
 class ComponentPayload2(GAPIBaseModel):
     model_config = ConfigDict(extra='forbid')
-    text_component: TextComponent2 = Field(..., alias='textComponent')
+    text_component: TextComponent2 | None = Field(None, alias='textComponent')
+    logo_component: LogoComponent1 | None = Field(None, alias='logoComponent')
 
 class Banner(GAPIBaseModel):
     model_config = ConfigDict(extra='forbid')
@@ -192,10 +232,53 @@ class TransactionDetail1(GAPIBaseModel):
     component_payload: ComponentPayload3 = Field(..., alias='componentPayload')
     component_primitive: str = Field(..., alias='componentPrimitive')
 
+class TextComponent3(GAPIBaseModel):
+    model_config = ConfigDict(extra='forbid')
+    tags: dict[str, Any]
+    text: str
+    text_type: str = Field(..., alias='textType')
+
+class Tags3(GAPIBaseModel):
+    model_config = ConfigDict(extra='forbid')
+    alt_text: str = Field(..., alias='ALT_TEXT')
+
+class ImageListItem(GAPIBaseModel):
+    model_config = ConfigDict(extra='forbid')
+    tags: Tags3
+    url: str
+
+class ImageListComponent(GAPIBaseModel):
+    model_config = ConfigDict(extra='forbid')
+    image_list: list[ImageListItem] = Field(..., alias='imageList')
+
+class ComponentPayload5(GAPIBaseModel):
+    model_config = ConfigDict(extra='forbid')
+    text_component: TextComponent3 | None = Field(None, alias='textComponent')
+    image_list_component: ImageListComponent | None = Field(None, alias='imageListComponent')
+
+class ComponentListItem(GAPIBaseModel):
+    model_config = ConfigDict(extra='forbid')
+    component_payload: ComponentPayload5 = Field(..., alias='componentPayload')
+    component_primitive: str = Field(..., alias='componentPrimitive')
+
+class MixedComponent(GAPIBaseModel):
+    model_config = ConfigDict(extra='forbid')
+    component_list: list[ComponentListItem] = Field(..., alias='componentList')
+
+class ComponentPayload4(GAPIBaseModel):
+    model_config = ConfigDict(extra='forbid')
+    mixed_component: MixedComponent = Field(..., alias='mixedComponent')
+
+class RelatedBenefits(GAPIBaseModel):
+    model_config = ConfigDict(extra='forbid')
+    component_payload: ComponentPayload4 = Field(..., alias='componentPayload')
+    component_primitive: str = Field(..., alias='componentPrimitive')
+
 class Components1(GAPIBaseModel):
     model_config = ConfigDict(extra='forbid')
     banner: Banner = Field(..., alias='BANNER')
     transaction_detail: TransactionDetail1 = Field(..., alias='TRANSACTION_DETAIL')
+    related_benefits: RelatedBenefits | None = Field(None, alias='RELATED_BENEFITS')
 
 class CardOption(GAPIBaseModel):
     model_config = ConfigDict(extra='forbid')
@@ -291,6 +374,7 @@ class MaturityRating(GAPIBaseModel):
     description: str
     display_text: str = Field(..., alias='displayText')
     id: str
+    country_code: str | None = Field(None, alias='countryCode')
 
 class Metadata1(GAPIBaseModel):
     model_config = ConfigDict(extra='forbid')
