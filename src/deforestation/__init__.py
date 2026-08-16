@@ -53,6 +53,7 @@ class Deforestation:
         locale: str = "en-US",
         host: str = DEFAULT_HOST,
         client_version: str = CLIENT_VERSION,
+        web_path: str = WEB_PATH,
     ) -> None:
         """Initializes the Deforestation client.
 
@@ -61,10 +62,14 @@ class Deforestation:
             locale: Language the response is written in.
             host: Marketplace the catalog is read from, see `MARKETPLACES`.
             client_version: Version the web player claims to be.
+            web_path: Prefix the pages sit under, which every marketplace but
+                the rest of the world one serves under `WEB_PATH`, see
+                `REGION_WEB_PATHS`.
         """
         self.locale = locale
         self.host = host
         self.client_version = client_version
+        self.web_path = web_path
         self.get_around_client = get_around_client or GetAround()
 
         self.detail = Detail(self)
@@ -132,7 +137,7 @@ class Deforestation:
         page answer with JSON rather than with HTML.
         """
         return self._get(
-            url=f"https://{self.host}/{WEB_PATH}/{path}",
+            url=f"https://{self.host}/{self.web_path}/{path}",
             params={**params, "dvWebAppClientVersion": self.client_version},
             headers={"x-requested-with": "WebAppSPA"},
             log_id=log_id,
@@ -151,7 +156,7 @@ class Deforestation:
         with one widget's worth of data rather than with a whole page.
         """
         return self._get(
-            url=f"https://{self.host}/{WEB_PATH}/api/{operation}",
+            url=f"https://{self.host}/{self.web_path}/api/{operation}",
             params=params,
             headers={"x-requested-with": "XMLHttpRequest"},
             log_id=log_id,

@@ -1,7 +1,7 @@
+from ipaddress import IPv4Address
+from typing import Any
 from good_ass_pydantic_integrator import GAPIBaseModel
 from pydantic import ConfigDict, Field
-from typing import Any
-from ipaddress import IPv4Address
 
 class MetaTag(GAPIBaseModel):
     model_config = ConfigDict(extra='forbid')
@@ -411,7 +411,7 @@ class LogoComponent(GAPIBaseModel):
 
 class ComponentPayload1(GAPIBaseModel):
     model_config = ConfigDict(extra='forbid')
-    text_component: TextComponent = Field(..., alias='textComponent')
+    text_component: TextComponent | None = Field(None, alias='textComponent')
     logo_component: LogoComponent | None = Field(None, alias='logoComponent')
 
 class Header(GAPIBaseModel):
@@ -518,7 +518,7 @@ class LogoComponent1(GAPIBaseModel):
 
 class ComponentPayload4(GAPIBaseModel):
     model_config = ConfigDict(extra='forbid')
-    text_component: TextComponent3 = Field(..., alias='textComponent')
+    text_component: TextComponent3 | None = Field(None, alias='textComponent')
     logo_component: LogoComponent1 | None = Field(None, alias='logoComponent')
 
 class Banner1(GAPIBaseModel):
@@ -1633,10 +1633,10 @@ class Actions(GAPIBaseModel):
 
 class EpisodeList(GAPIBaseModel):
     model_config = ConfigDict(extra='forbid')
-    header: str | None = None
-    total_card_size: int | None = Field(None, alias='totalCardSize')
-    card_title_ids: list[str] | None = Field(None, alias='cardTitleIds')
-    actions: Actions | None = None
+    header: str
+    total_card_size: int = Field(..., alias='totalCardSize')
+    card_title_ids: list[str] = Field(..., alias='cardTitleIds')
+    actions: Actions
 
 class CustomerReviewsText(GAPIBaseModel):
     model_config = ConfigDict(extra='forbid')
@@ -1713,7 +1713,7 @@ class Poster2x3(GAPIBaseModel):
 
 class Images3(GAPIBaseModel):
     model_config = ConfigDict(extra='forbid')
-    cover: Cover | None = None
+    cover: Cover
     hero: Hero | None = None
     poster2x3: Poster2x3 | None = None
 
