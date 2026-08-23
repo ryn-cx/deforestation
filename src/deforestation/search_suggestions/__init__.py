@@ -4,24 +4,23 @@
 from __future__ import annotations
 
 from logging import NullHandler, getLogger
-from typing import Any, override
 
 from deforestation.base_api_endpoint import BaseEndpoint
-from deforestation.search_suggestions.models import SearchSuggestionsModel
+from deforestation.search_suggestions.models import (
+    SearchSuggestionsModel,
+    model_validate_json,
+)
 
 logger = getLogger(__name__)
 logger.addHandler(NullHandler())
 
 
-class SearchSuggestions(BaseEndpoint[SearchSuggestionsModel]):
+# TODO: Validate
+class SearchSuggestions(BaseEndpoint):
     """Manage the search suggestions file.
 
-    What the search box offers while a query is being typed. A suggestion is a
-    query rather than a title: `href` is the search it stands for, not a detail
-    page, so a suggestion has to be searched for to be resolved to anything.
-
-    This is one of the operations the app calls while a page is already open, so
-    it answers with the suggestions alone rather than with a page.
+    A suggestion is a query rather than a title, so what it links to is the
+    search it stands for and not a detail page.
 
     Source: https://www.amazon.com/gp/video/search (the search box)
 
@@ -42,19 +41,24 @@ class SearchSuggestions(BaseEndpoint[SearchSuggestionsModel]):
         - Connection: keep-alive
     """
 
-    _response_model = SearchSuggestionsModel
+    # TODO: Validate
+    def __call__(self, prefix: str) -> SearchSuggestionsModel:
+        """Look the suggestions for what has been typed up and return them."""
+        log_id = self.get_log_id(self.__call__, locals())
+        return self.load(self.download(prefix), log_id)
 
     # TODO: Validate
-    @override
-    def download(self, prefix: str) -> dict[str, Any]:
+    def download(self, prefix: str) -> str:
+        """Download the search suggestions file."""
         log_id = self.get_log_id(self.download, locals())
-        return self._client.download_api(
-            operation="searchSuggestions",
+        return self._client.download(
+            endpoint="api/searchSuggestions",
             params={"phrase": prefix},
+            headers={"x-requested-with": "XMLHttpRequest"},
             log_id=log_id,
         )
 
     # TODO: Validate
-    @override
-    def download_and_parse(self, prefix: str) -> SearchSuggestionsModel:
-        return self.parse(self.download(prefix))
+    def load(self, data: str, log_id: str = "") -> SearchSuggestionsModel:
+        """Read a downloaded search suggestions file into its model."""
+        return model_validate_json(data, log_id or type(self).__name__)

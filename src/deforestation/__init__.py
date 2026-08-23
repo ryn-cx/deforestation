@@ -1,6 +1,9 @@
 # TODO: Validate
 """Contains the Deforestation class."""
 
+from __future__ import annotations
+
+import json
 import time
 from http import HTTPStatus
 from logging import NullHandler, getLogger
@@ -8,7 +11,6 @@ from typing import Any
 
 from get_around import GetAround
 
-from deforestation.constants import CLIENT_VERSION, DEFAULT_HOST, WEB_PATH
 from deforestation.detail import Detail
 from deforestation.detail_widgets import DetailWidgets
 from deforestation.exceptions import (
@@ -23,53 +25,42 @@ from deforestation.search_suggestions import SearchSuggestions
 logger = getLogger(__name__)
 logger.addHandler(NullHandler())
 
-USER_AGENT = (
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
-    "(KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36"
-)
-"""Browser the web player is pretending to be.
-
-The response is built for whatever browser asks for it, so a user agent that is
-not a browser gets a page that is not worth parsing.
-"""
+API_DOMAIN = "www.amazon.com"
 
 
+# TODO: Validate
 class Deforestation:
     """Prime Video API wrapper.
 
-    The website is a single page app: the server renders the first page, and
-    every page after it is fetched as JSON by the app itself. Asking for a page
-    the way the app does returns that JSON, which is the same state the rendered
-    HTML is built from, so nothing has to be scraped out of markup.
-
-    Nothing here is authenticated. An account only changes what a title says
-    about itself (owned, in the watchlist, resume position), never whether the
-    title comes back.
+    The store's video section is a single page app, so asking for a page the
+    way the app does answers with the JSON the page is rendered from. Nothing
+    here is authenticated; an account only changes what a title says about
+    itself, never whether the title comes back.
     """
 
+    # TODO: Validate
     def __init__(
         self,
         get_around_client: GetAround | None = None,
         locale: str = "en-US",
-        host: str = DEFAULT_HOST,
-        client_version: str = CLIENT_VERSION,
-        web_path: str = WEB_PATH,
+        client_version: str = "1.0.127846.0",
     ) -> None:
         """Initializes the Deforestation client.
+
+        The client holds one attribute per endpoint, so `client.detail(id)`
+        looks a title up and `client.detail.download(id)` and
+        `client.detail.load(data)` are the halves of it.
 
         Args:
             get_around_client: The HTTP client requests are sent through.
             locale: Language the response is written in.
-            host: Marketplace the catalog is read from, see `MARKETPLACES`.
-            client_version: Version the web player claims to be.
-            web_path: Prefix the pages sit under, which every marketplace but
-                the rest of the world one serves under `WEB_PATH`, see
-                `REGION_WEB_PATHS`.
+            client_version: Version the web player sends as
+                `dvWebAppClientVersion`, which is what makes a page answer with
+                its data instead of its HTML. Any value has been accepted so
+                far, but the real one is sent to stay unremarkable.
         """
         self.locale = locale
-        self.host = host
         self.client_version = client_version
-        self.web_path = web_path
         self.get_around_client = get_around_client or GetAround()
 
         self.detail = Detail(self)
@@ -77,87 +68,63 @@ class Deforestation:
         self.search = Search(self)
         self.search_suggestions = SearchSuggestions(self)
 
-    def _headers(self) -> dict[str, str]:
+    # TODO: Validate
+    def _default_headers(self) -> dict[str, str]:
+        """Return the headers every request is sent with."""
         return {
-            # "Host": Set by httpx
-            "User-Agent": USER_AGENT,
+            # A response is built for whatever browser asks for it, so a user
+            # agent that is not a browser gets a page that is not worth parsing.
+            "User-Agent": (
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+                "(KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36"
+            ),
             "Accept": "application/json",
             "Accept-Language": self.locale,
-            # "Accept-Encoding": Set by httpx
-            "Referer": f"https://{self.host}/",
+            "Referer": f"https://{API_DOMAIN}/",
             "Sec-Fetch-Dest": "empty",
             "Sec-Fetch-Mode": "cors",
             "Sec-Fetch-Site": "same-origin",
         }
 
-    def _get(
+    # TODO: Validate
+    def download(
         self,
-        url: str,
+        endpoint: str,
         params: dict[str, Any],
         headers: dict[str, str],
         log_id: str,
-    ) -> dict[str, Any]:
+    ) -> str:
+        """Downloads from the API and returns the body as it was served."""
         logger.debug("Downloading: %s", log_id)
+        url = f"https://{API_DOMAIN}/gp/video/{endpoint}"
         start = time.monotonic()
         response = self.get_around_client.get(
             url,
             params=params,
-            headers={**self._headers(), **headers},
+            headers={**self._default_headers(), **headers},
         )
 
-        if response.status_code != HTTPStatus.OK:
-            if response.status_code == HTTPStatus.NOT_FOUND:
-                raise ResourceNotFoundError(response.status_code, response.text)
+        if response.status_code == HTTPStatus.NOT_FOUND:
+            raise ResourceNotFoundError(response.status_code, response.text)
+        if response.status_code == HTTPStatus.SERVICE_UNAVAILABLE:
             # A bot check is served as an unavailable page with an HTML body,
-            # which is also what a real outage looks like, so the two are only
-            # told apart by how often they happen.
-            if response.status_code == HTTPStatus.SERVICE_UNAVAILABLE:
-                raise BotCheckError(response.status_code, response.text)
+            # which is also what a real outage looks like.
+            raise BotCheckError(response.status_code, response.text)
+        if response.status_code != HTTPStatus.OK:
             raise HTTPError(response.status_code, response.text)
 
         logger.debug("Downloaded %s (%.4f s)", log_id, time.monotonic() - start)
-        parsed: dict[str, Any] = response.json()
-        # A page that does not exist as asked for answers with the page that
-        # does, and the app loads that one instead of rendering anything.
-        if "redirect" in parsed:
-            raise RedirectedError(parsed["redirect"], parsed)
-        return parsed
+        return self._validate_download(response.text)
 
     # TODO: Validate
-    def download_page(
-        self,
-        path: str,
-        params: dict[str, Any],
-        log_id: str,
-    ) -> dict[str, Any]:
-        """Downloads a page as the data it is rendered from.
-
-        `dvWebAppClientVersion` and the `WebAppSPA` header are what the app
-        sends when it navigates itself, and together they are what makes the
-        page answer with JSON rather than with HTML.
-        """
-        return self._get(
-            url=f"https://{self.host}/{self.web_path}/{path}",
-            params={**params, "dvWebAppClientVersion": self.client_version},
-            headers={"x-requested-with": "WebAppSPA"},
-            log_id=log_id,
-        )
-
-    # TODO: Validate
-    def download_api(
-        self,
-        operation: str,
-        params: dict[str, Any],
-        log_id: str,
-    ) -> dict[str, Any]:
-        """Downloads from an operation the app calls outside of a navigation.
-
-        These are the calls a page makes once it is already open, so they answer
-        with one widget's worth of data rather than with a whole page.
-        """
-        return self._get(
-            url=f"https://{self.host}/{self.web_path}/api/{operation}",
-            params=params,
-            headers={"x-requested-with": "XMLHttpRequest"},
-            log_id=log_id,
-        )
+    @staticmethod
+    def _validate_download(response: str) -> str:
+        """Raise when the page answered with a redirect instead of its data."""
+        try:
+            parsed = json.loads(response)
+        except ValueError:
+            return response
+        redirect = parsed.get("redirect") if isinstance(parsed, dict) else None
+        if redirect:
+            raise RedirectedError(redirect, response)
+        return response

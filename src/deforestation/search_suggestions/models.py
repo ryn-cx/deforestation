@@ -1,29 +1,45 @@
-from typing import Any
-from good_ass_pydantic_integrator import GAPIBaseModel
-from pydantic import ConfigDict, Field
+"""SearchSuggestionsModel, strict to a type checker, all-optional at runtime.
 
-class Availability(GAPIBaseModel):
-    model_config = ConfigDict(extra='forbid')
-    description: str
-    severity: str
+A type checker reads the strict model, so every field carries the type and
+the requiredness the schema recorded. At runtime the all-optional copy is imported
+instead, so a response that has drifted still parses and a field the data is
+missing is None despite what its type hint says.
+"""
 
-class Metadata(GAPIBaseModel):
-    model_config = ConfigDict(extra='forbid')
-    availability: Availability
+from typing import TYPE_CHECKING
 
-class Text(GAPIBaseModel):
-    model_config = ConfigDict(extra='forbid')
-    attrs: dict[str, Any]
-    string: str
+from good_ass_pydantic_integrator import load
 
-class Suggestion(GAPIBaseModel):
-    model_config = ConfigDict(extra='forbid')
-    href: str
-    ref_marker: str = Field(..., alias='refMarker')
-    text: Text
+from .optional_models import SearchSuggestionsModel as OptionalModel
+from .strict_models import SearchSuggestionsModel as StrictModel
 
-class SearchSuggestionsModel(GAPIBaseModel):
-    model_config = ConfigDict(extra='forbid')
-    field__type: str = Field(..., alias='__type')
-    metadata: Metadata
-    suggestions: list[Suggestion]
+if TYPE_CHECKING:
+    from .strict_models import (
+        Availability,
+        Metadata,
+        SearchSuggestionsModel,
+        Suggestion,
+        Text,
+    )
+else:
+    from .optional_models import (
+        Availability,
+        Metadata,
+        SearchSuggestionsModel,
+        Suggestion,
+        Text,
+    )
+
+__all__ = [
+    "Availability",
+    "Metadata",
+    "SearchSuggestionsModel",
+    "Suggestion",
+    "Text",
+    "model_validate_json",
+]
+
+
+def model_validate_json(data: str | bytes | object, log_id: str) -> SearchSuggestionsModel:
+    """Read a downloaded file into SearchSuggestionsModel."""
+    return load.model_validate_json(StrictModel, OptionalModel, data, log_id)

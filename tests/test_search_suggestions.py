@@ -5,30 +5,38 @@ from typing import TYPE_CHECKING
 
 import pytest
 
-from tests.utils import download_and_save, parsed_json
+from deforestation.search_suggestions.models import SearchSuggestionsModel
+from tests.utils import RecordedEndpoint
 
 if TYPE_CHECKING:
     from deforestation import Deforestation
-    from deforestation.search_suggestions import SearchSuggestions
 
-PREFIX = "thunder"
-
-
-# TODO: Validate
-@pytest.fixture(scope="session")
-def client(client: Deforestation) -> SearchSuggestions:
-    return client.search_suggestions
+PREFIXES = [
+    pytest.param("thunder", id="the start of a title"),
+]
 
 
 # TODO: Validate
-def test_download(client: SearchSuggestions) -> None:
-    download_and_save(client, PREFIX, lambda: client.download(PREFIX))
+class SearchSuggestionsTest(RecordedEndpoint):
+    MODEL = SearchSuggestionsModel
 
 
 # TODO: Validate
-def test_parse(client: SearchSuggestions) -> None:
-    data = parsed_json(client, PREFIX)
-    assert data.suggestions
-    # A suggestion is a query, so what it links to is a search rather than a
-    # detail page, and every one of them is for the prefix that was typed.
-    assert all(f"prefix={PREFIX}" in suggestion.href for suggestion in data.suggestions)
+@pytest.mark.parametrize("prefix", PREFIXES)
+def test_download(client: Deforestation, prefix: str) -> None:
+    SearchSuggestionsTest.download_test(
+        prefix,
+        lambda: client.search_suggestions.download(prefix),
+    )
+
+
+# TODO: Validate
+@pytest.mark.parametrize("prefix", PREFIXES)
+def test_parse(client: Deforestation, prefix: str) -> None:
+    suggestions = client.search_suggestions.load(
+        SearchSuggestionsTest.recorded_content(prefix),
+    )
+    # What was typed is wrapped in the markers the site renders it bold with.
+    assert all(
+        prefix in suggestion.text.string for suggestion in suggestions.suggestions
+    )
