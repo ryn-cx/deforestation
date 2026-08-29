@@ -6,13 +6,12 @@ from __future__ import annotations
 import logging
 
 from get_around import build_client_automatically
-from good_ass_pydantic_integrator import generate_model
 
 from deforestation import Deforestation
 from generate.constants import DEFORESTATION_PATH, FILES_PATH
-from generate.utils import download_if_missing
+from generate.utils import download_if_missing, load_ids, rebuild_model
 
-QUERIES = ["qzqzqzqzqz", "thundercats"]
+QUERIES = load_ids("SearchModel")
 """A query nothing matches and one that matches."""
 
 
@@ -26,7 +25,7 @@ def generate_search(client: Deforestation) -> None:
             query,
             lambda query=query: client.search.download(query),
         )
-    generate_model(FILES_PATH, DEFORESTATION_PATH, "SearchModel")
+    rebuild_model(FILES_PATH, DEFORESTATION_PATH, "SearchModel")
 
 
 if __name__ == "__main__":

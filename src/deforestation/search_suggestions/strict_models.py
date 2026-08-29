@@ -1,8 +1,8 @@
 from typing import Self
 from pydantic import ModelWrapValidatorHandler, PrivateAttr, model_validator
 from pydantic import ConfigDict
-from pydantic import BaseModel, Field
 from typing import Any
+from pydantic import BaseModel, Field
 
 class Availability(BaseModel):
     model_config = ConfigDict(defer_build=True)

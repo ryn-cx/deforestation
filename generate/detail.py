@@ -6,13 +6,12 @@ from __future__ import annotations
 import logging
 
 from get_around import build_client_automatically
-from good_ass_pydantic_integrator import generate_model
 
 from deforestation import Deforestation
 from generate.constants import DEFORESTATION_PATH, FILES_PATH
-from generate.utils import download_if_missing
+from generate.utils import download_if_missing, load_ids, rebuild_model
 
-TITLE_IDS = ["B005C8DB7E", "B005C8DBII", "B00BR6F9ZM", "B0CHF9MZXZ"]
+TITLE_IDS = load_ids("DetailModel")
 """A season, an episode, a movie and a season that fits on one page."""
 
 
@@ -26,7 +25,7 @@ def generate_detail(client: Deforestation) -> None:
             title_id,
             lambda title_id=title_id: client.detail.download(title_id),
         )
-    generate_model(FILES_PATH, DEFORESTATION_PATH, "DetailModel")
+    rebuild_model(FILES_PATH, DEFORESTATION_PATH, "DetailModel")
 
 
 if __name__ == "__main__":

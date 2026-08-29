@@ -6,13 +6,12 @@ from __future__ import annotations
 import logging
 
 from get_around import build_client_automatically
-from good_ass_pydantic_integrator import generate_model
 
 from deforestation import Deforestation
 from generate.constants import DEFORESTATION_PATH, FILES_PATH
-from generate.utils import download_if_missing
+from generate.utils import download_if_missing, load_ids, rebuild_model
 
-PREFIXES = ["thunder"]
+PREFIXES = load_ids("SearchSuggestionsModel")
 
 
 # TODO: Validate
@@ -25,7 +24,7 @@ def generate_search_suggestions(client: Deforestation) -> None:
             prefix,
             lambda prefix=prefix: client.search_suggestions.download(prefix),
         )
-    generate_model(FILES_PATH, DEFORESTATION_PATH, "SearchSuggestionsModel")
+    rebuild_model(FILES_PATH, DEFORESTATION_PATH, "SearchSuggestionsModel")
 
 
 if __name__ == "__main__":
