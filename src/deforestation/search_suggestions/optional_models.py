@@ -1,30 +1,30 @@
 from typing import Self
 from pydantic import ModelWrapValidatorHandler, PrivateAttr, model_validator
-from typing import Any
 from pydantic import BaseModel, ConfigDict, Field
+from typing import Any
 
 class Availability(BaseModel):
-    model_config = ConfigDict(extra='ignore')
+    model_config = ConfigDict(extra='ignore', defer_build=True)
     description: str | None = None
     severity: str | None = None
 
 class Metadata(BaseModel):
-    model_config = ConfigDict(extra='ignore')
+    model_config = ConfigDict(extra='ignore', defer_build=True)
     availability: Availability | None = None
 
 class Text(BaseModel):
-    model_config = ConfigDict(extra='ignore')
+    model_config = ConfigDict(extra='ignore', defer_build=True)
     attrs: dict[str, Any] | None = None
     string: str | None = None
 
 class Suggestion(BaseModel):
-    model_config = ConfigDict(extra='ignore')
+    model_config = ConfigDict(extra='ignore', defer_build=True)
     href: str | None = None
     ref_marker: str | None = Field(None, alias='refMarker')
     text: Text | None = None
 
 class SearchSuggestionsModel(BaseModel):
-    model_config = ConfigDict(extra='ignore')
+    model_config = ConfigDict(extra='ignore', defer_build=True)
     field__type: str | None = Field(None, alias='__type')
     metadata: Metadata | None = None
     suggestions: list[Suggestion] | None = None

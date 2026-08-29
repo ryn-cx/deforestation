@@ -1,27 +1,27 @@
 from typing import Self
 from pydantic import ModelWrapValidatorHandler, PrivateAttr, model_validator
+from pydantic import BaseModel, ConfigDict, Field
+from typing import Any
 from datetime import timedelta
 from ipaddress import IPv4Address
-from typing import Any
-from pydantic import BaseModel, ConfigDict, Field
 
 class PageMetadata(BaseModel):
-    model_config = ConfigDict(extra='ignore')
+    model_config = ConfigDict(extra='ignore', defer_build=True)
     page_type: str | None = Field(None, alias='pageType')
     sub_page_type: str | None = Field(None, alias='subPageType')
 
 class Meta(BaseModel):
-    model_config = ConfigDict(extra='ignore')
+    model_config = ConfigDict(extra='ignore', defer_build=True)
     name: str | None = None
     content: str | None = None
 
 class SitewideNavigationBar(BaseModel):
-    model_config = ConfigDict(extra='ignore')
+    model_config = ConfigDict(extra='ignore', defer_build=True)
     title: str | None = None
     meta: Meta | None = None
 
 class SitewideInlineScriptsTop(BaseModel):
-    model_config = ConfigDict(extra='ignore')
+    model_config = ConfigDict(extra='ignore', defer_build=True)
     include_common_meta: bool | None = Field(None, alias='includeCommonMeta')
     logging_endpoint: str | None = Field(None, alias='loggingEndpoint')
     disable_legacy_csm_postbacks: bool | None = Field(None, alias='disableLegacyCsmPostbacks')
@@ -35,7 +35,7 @@ class SitewideInlineScriptsTop(BaseModel):
     sub_page_type: str | None = Field(None, alias='subPageType')
 
 class SitewideInlineScriptsBottom(BaseModel):
-    model_config = ConfigDict(extra='ignore')
+    model_config = ConfigDict(extra='ignore', defer_build=True)
     include_common_meta: bool | None = Field(None, alias='includeCommonMeta')
     logging_endpoint: str | None = Field(None, alias='loggingEndpoint')
     disable_legacy_csm_postbacks: bool | None = Field(None, alias='disableLegacyCsmPostbacks')
@@ -49,7 +49,7 @@ class SitewideInlineScriptsBottom(BaseModel):
     sub_page_type: str | None = Field(None, alias='subPageType')
 
 class SitewideHead(BaseModel):
-    model_config = ConfigDict(extra='ignore')
+    model_config = ConfigDict(extra='ignore', defer_build=True)
     sitewide_navigation_bar: SitewideNavigationBar | None = Field(None, alias='sitewide-navigation-bar')
     sitewide_footer: dict[str, Any] | None = Field(None, alias='sitewide-footer')
     sitewide_inline_scripts_top: SitewideInlineScriptsTop | None = Field(None, alias='sitewide-inline-scripts-top')
@@ -63,40 +63,40 @@ class SitewideHead(BaseModel):
     sitewide_alexa: dict[str, Any] | None = Field(None, alias='sitewide-alexa')
 
 class Head(BaseModel):
-    model_config = ConfigDict(extra='ignore')
+    model_config = ConfigDict(extra='ignore', defer_build=True)
     page_metadata: PageMetadata | None = Field(None, alias='pageMetadata')
     sitewide_head: SitewideHead | None = Field(None, alias='sitewideHead')
     title: str | None = None
 
 class FocusMessage(BaseModel):
-    model_config = ConfigDict(extra='ignore')
+    model_config = ConfigDict(extra='ignore', defer_build=True)
     icon: str | None = None
     message: str | None = None
 
 class GlanceMessage(BaseModel):
-    model_config = ConfigDict(extra='ignore')
+    model_config = ConfigDict(extra='ignore', defer_build=True)
     icon: str | None = None
     message: str | None = None
 
 class HighValueMessage(BaseModel):
-    model_config = ConfigDict(extra='ignore')
+    model_config = ConfigDict(extra='ignore', defer_build=True)
     message: str | None = None
     icon: str | None = None
 
 class ProviderLogo(BaseModel):
-    model_config = ConfigDict(extra='ignore')
+    model_config = ConfigDict(extra='ignore', defer_build=True)
     image_url: str | None = Field(None, alias='imageUrl')
     message: str | None = None
     logo_scalar_horizontal: str | None = Field(None, alias='logoScalarHorizontal')
 
 class TitleMetadataBadge(BaseModel):
-    model_config = ConfigDict(extra='ignore')
+    model_config = ConfigDict(extra='ignore', defer_build=True)
     entry_type: str | None = Field(None, alias='entryType')
     level: str | None = None
     message: str | None = None
 
 class EntitlementCues(BaseModel):
-    model_config = ConfigDict(extra='ignore')
+    model_config = ConfigDict(extra='ignore', defer_build=True)
     buybox_message: dict[str, Any] | None = Field(None, alias='buyboxMessage')
     compact_focus_message: dict[str, Any] | None = Field(None, alias='compactFocusMessage')
     content_source_logo: dict[str, Any] | None = Field(None, alias='contentSourceLogo')
@@ -113,19 +113,19 @@ class EntitlementCues(BaseModel):
     title_metadata_badge: TitleMetadataBadge | None = Field(None, alias='titleMetadataBadge')
 
 class HoverInfo(BaseModel):
-    model_config = ConfigDict(extra='ignore')
+    model_config = ConfigDict(extra='ignore', defer_build=True)
     can_hover: bool | None = Field(None, alias='canHover')
 
 class Cover(BaseModel):
-    model_config = ConfigDict(extra='ignore')
+    model_config = ConfigDict(extra='ignore', defer_build=True)
     url: str | None = None
 
 class Images(BaseModel):
-    model_config = ConfigDict(extra='ignore')
+    model_config = ConfigDict(extra='ignore', defer_build=True)
     cover: Cover | None = None
 
 class ItemAnalytics(BaseModel):
-    model_config = ConfigDict(extra='ignore')
+    model_config = ConfigDict(extra='ignore', defer_build=True)
     is_prime_customer: str | None = Field(None, alias='isPrimeCustomer')
     page_type_id_source: str | None = Field(None, alias='pageTypeIdSource')
     ref_marker: str | None = Field(None, alias='refMarker')
@@ -134,19 +134,19 @@ class ItemAnalytics(BaseModel):
     pvs3: str | None = None
 
 class Link(BaseModel):
-    model_config = ConfigDict(extra='ignore')
+    model_config = ConfigDict(extra='ignore', defer_build=True)
     analytics: dict[str, Any] | None = None
     metadata: dict[str, Any] | None = None
     url: str | None = None
 
 class LiveInfo(BaseModel):
-    model_config = ConfigDict(extra='ignore')
+    model_config = ConfigDict(extra='ignore', defer_build=True)
     status: str | None = None
     time_badge: str | None = Field(None, alias='timeBadge')
     venue: str | None = None
 
 class MaturityRatingBadge(BaseModel):
-    model_config = ConfigDict(extra='ignore')
+    model_config = ConfigDict(extra='ignore', defer_build=True)
     field__type: str | None = Field(None, alias='__type')
     description: str | None = None
     display_text: str | None = Field(None, alias='displayText')
@@ -154,23 +154,23 @@ class MaturityRatingBadge(BaseModel):
     country_code: str | None = Field(None, alias='countryCode')
 
 class Query(BaseModel):
-    model_config = ConfigDict(extra='ignore')
+    model_config = ConfigDict(extra='ignore', defer_build=True)
     signin: str | None = None
     return_url: str | None = Field(None, alias='returnUrl')
     ref_: str | None = None
 
 class Endpoint(BaseModel):
-    model_config = ConfigDict(extra='ignore')
+    model_config = ConfigDict(extra='ignore', defer_build=True)
     partial_url: str | None = Field(None, alias='partialURL')
     query: Query | None = None
 
 class Text(BaseModel):
-    model_config = ConfigDict(extra='ignore')
+    model_config = ConfigDict(extra='ignore', defer_build=True)
     attrs: dict[str, Any] | None = None
     string: str | None = None
 
 class Action(BaseModel):
-    model_config = ConfigDict(extra='ignore')
+    model_config = ConfigDict(extra='ignore', defer_build=True)
     ajax_enabled: bool | None = Field(None, alias='ajaxEnabled')
     endpoint: Endpoint | None = None
     format_code: str | None = Field(None, alias='formatCode')
@@ -178,24 +178,24 @@ class Action(BaseModel):
     text: Text | None = None
 
 class Item(BaseModel):
-    model_config = ConfigDict(extra='ignore')
+    model_config = ConfigDict(extra='ignore', defer_build=True)
     field__type: str | None = Field(None, alias='__type')
     action: Action | None = None
     item_type: str | None = Field(None, alias='itemType')
     text: str | None = None
 
 class OverflowMenu(BaseModel):
-    model_config = ConfigDict(extra='ignore')
+    model_config = ConfigDict(extra='ignore', defer_build=True)
     items: list[Item] | None = None
     title: str | None = None
 
 class Endpoint1(BaseModel):
-    model_config = ConfigDict(extra='ignore')
+    model_config = ConfigDict(extra='ignore', defer_build=True)
     partial_url: str | None = Field(None, alias='partialURL')
     query: Query | None = None
 
 class WatchlistAction(BaseModel):
-    model_config = ConfigDict(extra='ignore')
+    model_config = ConfigDict(extra='ignore', defer_build=True)
     ajax_enabled: bool | None = Field(None, alias='ajaxEnabled')
     endpoint: Endpoint1 | None = None
     format_code: str | None = Field(None, alias='formatCode')
@@ -203,12 +203,12 @@ class WatchlistAction(BaseModel):
     text: Text | None = None
 
 class CustomerReviewsText(BaseModel):
-    model_config = ConfigDict(extra='ignore')
+    model_config = ConfigDict(extra='ignore', defer_build=True)
     attrs: dict[str, Any] | None = None
     string: str | None = None
 
 class CustomerReviews(BaseModel):
-    model_config = ConfigDict(extra='ignore')
+    model_config = ConfigDict(extra='ignore', defer_build=True)
     count: int | None = None
     count_formatted: str | None = Field(None, alias='countFormatted')
     customer_reviews_text: CustomerReviewsText | None = Field(None, alias='customerReviewsText')
@@ -216,7 +216,7 @@ class CustomerReviews(BaseModel):
     value: int | float | None = None
 
 class Entity(BaseModel):
-    model_config = ConfigDict(extra='ignore')
+    model_config = ConfigDict(extra='ignore', defer_build=True)
     buy_box_actions: list[Any] | None = Field(None, alias='buyBoxActions')
     degradations: list[Any] | None = None
     display_title: str | None = Field(None, alias='displayTitle')
@@ -243,12 +243,12 @@ class Entity(BaseModel):
     customer_reviews: CustomerReviews | None = Field(None, alias='customerReviews')
 
 class EntitlementCues1(BaseModel):
-    model_config = ConfigDict(extra='ignore')
+    model_config = ConfigDict(extra='ignore', defer_build=True)
     entitled_carousel: str | None = Field(None, alias='entitledCarousel')
     offer_type: str | None = Field(None, alias='offerType')
 
 class Action1(BaseModel):
-    model_config = ConfigDict(extra='ignore')
+    model_config = ConfigDict(extra='ignore', defer_build=True)
     analytics: dict[str, Any] | None = None
     label: str | None = None
     metadata: dict[str, Any] | None = None
@@ -256,12 +256,12 @@ class Action1(BaseModel):
     url: str | None = None
 
 class Badge(BaseModel):
-    model_config = ConfigDict(extra='ignore')
+    model_config = ConfigDict(extra='ignore', defer_build=True)
     badge_text: str | None = Field(None, alias='badgeText')
     badge_type: str | None = Field(None, alias='badgeType')
 
 class Container(BaseModel):
-    model_config = ConfigDict(extra='ignore')
+    model_config = ConfigDict(extra='ignore', defer_build=True)
     container_type: str | None = Field(None, alias='containerType')
     entities: list[Entity] | None = None
     entitlement_cues: EntitlementCues1 | None = Field(None, alias='entitlementCues')
@@ -277,7 +277,7 @@ class Container(BaseModel):
     badges: list[Badge] | None = None
 
 class FeatureSwitches(BaseModel):
-    model_config = ConfigDict(extra='ignore')
+    model_config = ConfigDict(extra='ignore', defer_build=True)
     use_post_for_enrichment: bool | None = Field(None, alias='usePostForEnrichment')
     disable_win_app_max_containers_limit: bool | None = Field(None, alias='disableWinAppMaxContainersLimit')
     is_pagination_limited_on_m_shop: bool | None = Field(None, alias='isPaginationLimitedOnMShop')
@@ -290,21 +290,21 @@ class FeatureSwitches(BaseModel):
     disable_storefront_tvod_checkout: bool | None = Field(None, alias='disableStorefrontTvodCheckout')
 
 class Availability(BaseModel):
-    model_config = ConfigDict(extra='ignore')
+    model_config = ConfigDict(extra='ignore', defer_build=True)
     description: str | None = None
     severity: str | None = None
 
 class Metadata(BaseModel):
-    model_config = ConfigDict(extra='ignore')
+    model_config = ConfigDict(extra='ignore', defer_build=True)
     availability: Availability | None = None
 
 class PageMetadata1(BaseModel):
-    model_config = ConfigDict(extra='ignore')
+    model_config = ConfigDict(extra='ignore', defer_build=True)
     hide_page_title: bool | None = Field(None, alias='hidePageTitle')
     should_generate_json_ld: bool | None = Field(None, alias='shouldGenerateJsonLD')
 
 class Strings(BaseModel):
-    model_config = ConfigDict(extra='ignore')
+    model_config = ConfigDict(extra='ignore', defer_build=True)
     dv_web_aria_label_filter_item: str | None = Field(None, alias='DV_WEB_ARIA_LABEL_FILTER_ITEM')
     dv_web_aria_previous_title: str | None = Field(None, alias='DV_WEB_ARIA_PREVIOUS_TITLE')
     dv_web_pwa_first_launch_modal_learn_more: str | None = Field(None, alias='DV_WEB_PWA_First_LAUNCH_MODAL_LEARN_MORE')
@@ -379,45 +379,45 @@ class Strings(BaseModel):
     dv_dp_tr_disliked_aria: str | None = Field(None, alias='DV_DP_TR_disliked_aria')
 
 class SwiftPageParameters(BaseModel):
-    model_config = ConfigDict(extra='ignore')
+    model_config = ConfigDict(extra='ignore', defer_build=True)
     page_id: str | None = Field(None, alias='pageId')
     page_type: str | None = Field(None, alias='pageType')
 
 class RequestFeatureSwitches(BaseModel):
-    model_config = ConfigDict(extra='ignore')
+    model_config = ConfigDict(extra='ignore', defer_build=True)
     horizontal_pagination: bool | None = Field(None, alias='HorizontalPagination')
 
 class CustomerState(BaseModel):
-    model_config = ConfigDict(extra='ignore')
+    model_config = ConfigDict(extra='ignore', defer_build=True)
     is_robotic: bool | None = Field(None, alias='isRobotic')
 
 class FeatureSwitches1(BaseModel):
-    model_config = ConfigDict(extra='ignore')
+    model_config = ConfigDict(extra='ignore', defer_build=True)
     show_floating_join_prime_button: bool | None = Field(None, alias='showFloatingJoinPrimeButton')
 
 class Metadata1(BaseModel):
-    model_config = ConfigDict(extra='ignore')
+    model_config = ConfigDict(extra='ignore', defer_build=True)
     availability: Availability | None = None
 
 class Image(BaseModel):
-    model_config = ConfigDict(extra='ignore')
+    model_config = ConfigDict(extra='ignore', defer_build=True)
     alt_text: str | None = Field(None, alias='altText')
     url: str | None = None
 
 class Branding(BaseModel):
-    model_config = ConfigDict(extra='ignore')
+    model_config = ConfigDict(extra='ignore', defer_build=True)
     image: Image | None = None
     label: str | None = None
     ref_marker: str | None = Field(None, alias='refMarker')
     url: str | None = None
 
 class NavSection(BaseModel):
-    model_config = ConfigDict(extra='ignore')
+    model_config = ConfigDict(extra='ignore', defer_build=True)
     desktop: str | None = None
     mobile: str | None = None
 
 class SubNode(BaseModel):
-    model_config = ConfigDict(extra='ignore')
+    model_config = ConfigDict(extra='ignore', defer_build=True)
     field__type: str | None = Field(None, alias='__type')
     id: str | None = None
     label: str | None = None
@@ -425,13 +425,13 @@ class SubNode(BaseModel):
     url: str | None = None
 
 class SubMenuItem(BaseModel):
-    model_config = ConfigDict(extra='ignore')
+    model_config = ConfigDict(extra='ignore', defer_build=True)
     id: str | None = None
     sub_nodes: list[SubNode] | None = Field(None, alias='subNodes')
     label: str | None = None
 
 class NavigationNode(BaseModel):
-    model_config = ConfigDict(extra='ignore')
+    model_config = ConfigDict(extra='ignore', defer_build=True)
     field__type: str | None = Field(None, alias='__type')
     id: str | None = None
     label: str | None = None
@@ -444,17 +444,17 @@ class NavigationNode(BaseModel):
     icon: str | None = None
 
 class Query2(BaseModel):
-    model_config = ConfigDict(extra='ignore')
+    model_config = ConfigDict(extra='ignore', defer_build=True)
     ie: str | None = None
     ref_: str | None = None
 
 class SubmitSearchDestructuredEndpoint(BaseModel):
-    model_config = ConfigDict(extra='ignore')
+    model_config = ConfigDict(extra='ignore', defer_build=True)
     partial_url: str | None = Field(None, alias='partialURL')
     query: Query2 | None = None
 
 class SearchBar(BaseModel):
-    model_config = ConfigDict(extra='ignore')
+    model_config = ConfigDict(extra='ignore', defer_build=True)
     clear_search_label: str | None = Field(None, alias='clearSearchLabel')
     close_search_alt_text: str | None = Field(None, alias='closeSearchAltText')
     is_search_suggestions_disabled: bool | None = Field(None, alias='isSearchSuggestionsDisabled')
@@ -465,7 +465,7 @@ class SearchBar(BaseModel):
     submit_search_endpoint: str | None = Field(None, alias='submitSearchEndpoint')
 
 class Nav(BaseModel):
-    model_config = ConfigDict(extra='ignore')
+    model_config = ConfigDict(extra='ignore', defer_build=True)
     aria_label: str | None = Field(None, alias='ariaLabel')
     branding: Branding | None = None
     collapsed_nav_browse_label: str | None = Field(None, alias='collapsedNavBrowseLabel')
@@ -474,7 +474,7 @@ class Nav(BaseModel):
     search_bar: SearchBar | None = Field(None, alias='searchBar')
 
 class SitewideNavigationBar1(BaseModel):
-    model_config = ConfigDict(extra='ignore')
+    model_config = ConfigDict(extra='ignore', defer_build=True)
     customer_state: CustomerState | None = Field(None, alias='customerState')
     feature_switches: FeatureSwitches1 | None = Field(None, alias='featureSwitches')
     is_sticky: bool | None = Field(None, alias='isSticky')
@@ -485,19 +485,19 @@ class SitewideNavigationBar1(BaseModel):
     is_roadblocked: bool | None = Field(None, alias='isRoadblocked')
 
 class SitewideInlineScriptsTop1(BaseModel):
-    model_config = ConfigDict(extra='ignore')
+    model_config = ConfigDict(extra='ignore', defer_build=True)
     hide_footer_gap: bool | None = Field(None, alias='hideFooterGap')
 
 class SitewideInlineScriptsBottom1(BaseModel):
-    model_config = ConfigDict(extra='ignore')
+    model_config = ConfigDict(extra='ignore', defer_build=True)
     hide_footer_gap: bool | None = Field(None, alias='hideFooterGap')
 
 class Metadata2(BaseModel):
-    model_config = ConfigDict(extra='ignore')
+    model_config = ConfigDict(extra='ignore', defer_build=True)
     availability: Availability | None = None
 
 class SitewideConditional(BaseModel):
-    model_config = ConfigDict(extra='ignore')
+    model_config = ConfigDict(extra='ignore', defer_build=True)
     degradations: list[Any] | None = None
     features: dict[str, Any] | None = None
     metadata: Metadata2 | None = None
@@ -506,12 +506,12 @@ class SitewideConditional(BaseModel):
     privacy_prefs_csrf_token: str | None = Field(None, alias='privacyPrefsCsrfToken')
 
 class SitewideAlexa(BaseModel):
-    model_config = ConfigDict(extra='ignore')
+    model_config = ConfigDict(extra='ignore', defer_build=True)
     device_config_id: str | None = Field(None, alias='deviceConfigId')
     iframe_origin: str | None = Field(None, alias='iframeOrigin')
 
 class Sitewide(BaseModel):
-    model_config = ConfigDict(extra='ignore')
+    model_config = ConfigDict(extra='ignore', defer_build=True)
     sitewide_navigation_bar: SitewideNavigationBar1 | None = Field(None, alias='sitewide-navigation-bar')
     sitewide_inline_scripts_top: SitewideInlineScriptsTop1 | None = Field(None, alias='sitewide-inline-scripts-top')
     sitewide_inline_scripts_bottom: SitewideInlineScriptsBottom1 | None = Field(None, alias='sitewide-inline-scripts-bottom')
@@ -519,7 +519,7 @@ class Sitewide(BaseModel):
     sitewide_alexa: SitewideAlexa | None = Field(None, alias='sitewide-alexa')
 
 class Body(BaseModel):
-    model_config = ConfigDict(extra='ignore')
+    model_config = ConfigDict(extra='ignore', defer_build=True)
     containers: list[Container] | None = None
     feature_switches: FeatureSwitches | None = Field(None, alias='featureSwitches')
     has_failed: bool | None = Field(None, alias='hasFailed')
@@ -538,17 +538,17 @@ class Body(BaseModel):
     sitewide: Sitewide | None = None
 
 class QueryParameters(BaseModel):
-    model_config = ConfigDict(extra='ignore')
+    model_config = ConfigDict(extra='ignore', defer_build=True)
     phrase: list[str] | None = None
     dv_web_app_client_version: list[str] | None = Field(None, alias='dvWebAppClientVersion')
 
 class Contingencies(BaseModel):
-    model_config = ConfigDict(extra='ignore')
+    model_config = ConfigDict(extra='ignore', defer_build=True)
     is_testing: bool | None = Field(None, alias='isTesting')
     values: dict[str, Any] | None = None
 
 class RequestContext(BaseModel):
-    model_config = ConfigDict(extra='ignore')
+    model_config = ConfigDict(extra='ignore', defer_build=True)
     customer_id: Any | None = Field(None, alias='customerID')
     user_agent: str | None = Field(None, alias='userAgent')
     is_internal: bool | None = Field(None, alias='isInternal')
@@ -580,12 +580,12 @@ class RequestContext(BaseModel):
     locale: str | None = None
 
 class Weblab(BaseModel):
-    model_config = ConfigDict(extra='ignore')
+    model_config = ConfigDict(extra='ignore', defer_build=True)
     weblab_name: str | None = Field(None, alias='weblabName')
     treatment_name: str | None = Field(None, alias='treatmentName')
 
 class ClickstreamData(BaseModel):
-    model_config = ConfigDict(extra='ignore')
+    model_config = ConfigDict(extra='ignore', defer_build=True)
     page_type: str | None = Field(None, alias='pageType')
     sub_page_type: str | None = Field(None, alias='subPageType')
     request_id: str | None = Field(None, alias='requestId')
@@ -599,12 +599,12 @@ class ClickstreamData(BaseModel):
     site_variant: str | None = Field(None, alias='siteVariant')
 
 class Profile(BaseModel):
-    model_config = ConfigDict(extra='ignore')
+    model_config = ConfigDict(extra='ignore', defer_build=True)
     age_group: str | None = Field(None, alias='ageGroup')
     is_child: bool | None = Field(None, alias='isChild')
 
 class FeaturePivots(BaseModel):
-    model_config = ConfigDict(extra='ignore')
+    model_config = ConfigDict(extra='ignore', defer_build=True)
     dv_web_feedback_widget_scheme_1382103: bool | None = Field(None, alias='DV_WEB_FEEDBACK_WIDGET_SCHEME_1382103')
     dv_web_linear_age_restriction_sign_in_explore_scheme_1445266: bool | None = Field(None, alias='DV_WEB_LINEAR_AGE_RESTRICTION_SIGN_IN_EXPLORE_SCHEME_1445266')
     is_agent_self_declaration_enabled: bool | None = Field(None, alias='isAgentSelfDeclarationEnabled')
@@ -656,11 +656,11 @@ class FeaturePivots(BaseModel):
     pv_web_lighthouse_1438707: bool | None = Field(None, alias='PV_WEB_LIGHTHOUSE_1438707')
 
 class Resiliency(BaseModel):
-    model_config = ConfigDict(extra='ignore')
+    model_config = ConfigDict(extra='ignore', defer_build=True)
     resiliency_version: str | None = Field(None, alias='resiliencyVersion')
 
 class GlobalStore(BaseModel):
-    model_config = ConfigDict(extra='ignore')
+    model_config = ConfigDict(extra='ignore', defer_build=True)
     request_context: RequestContext | None = Field(None, alias='RequestContext')
     clickstream_data: ClickstreamData | None = Field(None, alias='ClickstreamData')
     site_variant: str | None = Field(None, alias='SiteVariant')
@@ -671,7 +671,7 @@ class GlobalStore(BaseModel):
     cross_domain_sso_url: Any | None = Field(None, alias='CrossDomainSSOUrl')
 
 class Config(BaseModel):
-    model_config = ConfigDict(extra='ignore')
+    model_config = ConfigDict(extra='ignore', defer_build=True)
     delay_loading_indicator: bool | None = Field(None, alias='delayLoadingIndicator')
     csn_deny_list: list[str] | None = Field(None, alias='csnDenyList')
     disable_downloads_sync: bool | None = Field(None, alias='disableDownloadsSync')
@@ -679,7 +679,7 @@ class Config(BaseModel):
     force_fake_navigation_api: bool | None = Field(None, alias='forceFakeNavigationAPI')
 
 class SearchModel(BaseModel):
-    model_config = ConfigDict(extra='ignore')
+    model_config = ConfigDict(extra='ignore', defer_build=True)
     head: Head | None = None
     body: Body | None = None
     global_store: GlobalStore | None = Field(None, alias='globalStore')

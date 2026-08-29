@@ -1,25 +1,31 @@
 from typing import Self
 from pydantic import ModelWrapValidatorHandler, PrivateAttr, model_validator
-from typing import Any
+from pydantic import ConfigDict
 from pydantic import BaseModel, Field
+from typing import Any
 
 class Availability(BaseModel):
+    model_config = ConfigDict(defer_build=True)
     description: str
     severity: str
 
 class Metadata(BaseModel):
+    model_config = ConfigDict(defer_build=True)
     availability: Availability
 
 class Text(BaseModel):
+    model_config = ConfigDict(defer_build=True)
     attrs: dict[str, Any]
     string: str
 
 class Suggestion(BaseModel):
+    model_config = ConfigDict(defer_build=True)
     href: str
     ref_marker: str = Field(..., alias='refMarker')
     text: Text
 
 class SearchSuggestionsModel(BaseModel):
+    model_config = ConfigDict(defer_build=True)
     field__type: str = Field(..., alias='__type')
     metadata: Metadata
     suggestions: list[Suggestion]

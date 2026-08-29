@@ -1,23 +1,28 @@
 from typing import Self
 from pydantic import ModelWrapValidatorHandler, PrivateAttr, model_validator
+from pydantic import ConfigDict
+from pydantic import BaseModel, Field
+from typing import Any
 from datetime import timedelta
 from ipaddress import IPv4Address
-from typing import Any
-from pydantic import BaseModel, Field
 
 class PageMetadata(BaseModel):
+    model_config = ConfigDict(defer_build=True)
     page_type: str = Field(..., alias='pageType')
     sub_page_type: str = Field(..., alias='subPageType')
 
 class Meta(BaseModel):
+    model_config = ConfigDict(defer_build=True)
     name: str
     content: str
 
 class SitewideNavigationBar(BaseModel):
+    model_config = ConfigDict(defer_build=True)
     title: str
     meta: Meta
 
 class SitewideInlineScriptsTop(BaseModel):
+    model_config = ConfigDict(defer_build=True)
     include_common_meta: bool = Field(..., alias='includeCommonMeta')
     logging_endpoint: str = Field(..., alias='loggingEndpoint')
     disable_legacy_csm_postbacks: bool = Field(..., alias='disableLegacyCsmPostbacks')
@@ -31,6 +36,7 @@ class SitewideInlineScriptsTop(BaseModel):
     sub_page_type: str = Field(..., alias='subPageType')
 
 class SitewideInlineScriptsBottom(BaseModel):
+    model_config = ConfigDict(defer_build=True)
     include_common_meta: bool = Field(..., alias='includeCommonMeta')
     logging_endpoint: str = Field(..., alias='loggingEndpoint')
     disable_legacy_csm_postbacks: bool = Field(..., alias='disableLegacyCsmPostbacks')
@@ -44,6 +50,7 @@ class SitewideInlineScriptsBottom(BaseModel):
     sub_page_type: str = Field(..., alias='subPageType')
 
 class SitewideHead(BaseModel):
+    model_config = ConfigDict(defer_build=True)
     sitewide_navigation_bar: SitewideNavigationBar = Field(..., alias='sitewide-navigation-bar')
     sitewide_footer: dict[str, Any] = Field(..., alias='sitewide-footer')
     sitewide_inline_scripts_top: SitewideInlineScriptsTop = Field(..., alias='sitewide-inline-scripts-top')
@@ -57,33 +64,40 @@ class SitewideHead(BaseModel):
     sitewide_alexa: dict[str, Any] = Field(..., alias='sitewide-alexa')
 
 class Head(BaseModel):
+    model_config = ConfigDict(defer_build=True)
     page_metadata: PageMetadata = Field(..., alias='pageMetadata')
     sitewide_head: SitewideHead = Field(..., alias='sitewideHead')
     title: str
 
 class FocusMessage(BaseModel):
+    model_config = ConfigDict(defer_build=True)
     icon: str | None = None
     message: str
 
 class GlanceMessage(BaseModel):
+    model_config = ConfigDict(defer_build=True)
     icon: str | None = None
     message: str
 
 class HighValueMessage(BaseModel):
+    model_config = ConfigDict(defer_build=True)
     message: str
     icon: str | None = None
 
 class ProviderLogo(BaseModel):
+    model_config = ConfigDict(defer_build=True)
     image_url: str | None = Field(None, alias='imageUrl')
     message: str | None = None
     logo_scalar_horizontal: str | None = Field(None, alias='logoScalarHorizontal')
 
 class TitleMetadataBadge(BaseModel):
+    model_config = ConfigDict(defer_build=True)
     entry_type: str | None = Field(None, alias='entryType')
     level: str | None = None
     message: str | None = None
 
 class EntitlementCues(BaseModel):
+    model_config = ConfigDict(defer_build=True)
     buybox_message: dict[str, Any] = Field(..., alias='buyboxMessage')
     compact_focus_message: dict[str, Any] = Field(..., alias='compactFocusMessage')
     content_source_logo: dict[str, Any] = Field(..., alias='contentSourceLogo')
@@ -100,15 +114,19 @@ class EntitlementCues(BaseModel):
     title_metadata_badge: TitleMetadataBadge = Field(..., alias='titleMetadataBadge')
 
 class HoverInfo(BaseModel):
+    model_config = ConfigDict(defer_build=True)
     can_hover: bool = Field(..., alias='canHover')
 
 class Cover(BaseModel):
+    model_config = ConfigDict(defer_build=True)
     url: str
 
 class Images(BaseModel):
+    model_config = ConfigDict(defer_build=True)
     cover: Cover
 
 class ItemAnalytics(BaseModel):
+    model_config = ConfigDict(defer_build=True)
     is_prime_customer: str = Field(..., alias='isPrimeCustomer')
     page_type_id_source: str | None = Field(None, alias='pageTypeIdSource')
     ref_marker: str = Field(..., alias='refMarker')
@@ -117,16 +135,19 @@ class ItemAnalytics(BaseModel):
     pvs3: str | None = None
 
 class Link(BaseModel):
+    model_config = ConfigDict(defer_build=True)
     analytics: dict[str, Any]
     metadata: dict[str, Any]
     url: str
 
 class LiveInfo(BaseModel):
+    model_config = ConfigDict(defer_build=True)
     status: str
     time_badge: str = Field(..., alias='timeBadge')
     venue: str | None = None
 
 class MaturityRatingBadge(BaseModel):
+    model_config = ConfigDict(defer_build=True)
     field__type: str = Field(..., alias='__type')
     description: str
     display_text: str = Field(..., alias='displayText')
@@ -134,19 +155,23 @@ class MaturityRatingBadge(BaseModel):
     country_code: str | None = Field(None, alias='countryCode')
 
 class Query(BaseModel):
+    model_config = ConfigDict(defer_build=True)
     signin: str
     return_url: str = Field(..., alias='returnUrl')
     ref_: str
 
 class Endpoint(BaseModel):
+    model_config = ConfigDict(defer_build=True)
     partial_url: str = Field(..., alias='partialURL')
     query: Query
 
 class Text(BaseModel):
+    model_config = ConfigDict(defer_build=True)
     attrs: dict[str, Any]
     string: str
 
 class Action(BaseModel):
+    model_config = ConfigDict(defer_build=True)
     ajax_enabled: bool = Field(..., alias='ajaxEnabled')
     endpoint: Endpoint
     format_code: str = Field(..., alias='formatCode')
@@ -154,20 +179,24 @@ class Action(BaseModel):
     text: Text
 
 class Item(BaseModel):
+    model_config = ConfigDict(defer_build=True)
     field__type: str = Field(..., alias='__type')
     action: Action
     item_type: str = Field(..., alias='itemType')
     text: str
 
 class OverflowMenu(BaseModel):
+    model_config = ConfigDict(defer_build=True)
     items: list[Item]
     title: str
 
 class Endpoint1(BaseModel):
+    model_config = ConfigDict(defer_build=True)
     partial_url: str = Field(..., alias='partialURL')
     query: Query
 
 class WatchlistAction(BaseModel):
+    model_config = ConfigDict(defer_build=True)
     ajax_enabled: bool = Field(..., alias='ajaxEnabled')
     endpoint: Endpoint1
     format_code: str = Field(..., alias='formatCode')
@@ -175,10 +204,12 @@ class WatchlistAction(BaseModel):
     text: Text
 
 class CustomerReviewsText(BaseModel):
+    model_config = ConfigDict(defer_build=True)
     attrs: dict[str, Any]
     string: str
 
 class CustomerReviews(BaseModel):
+    model_config = ConfigDict(defer_build=True)
     count: int
     count_formatted: str = Field(..., alias='countFormatted')
     customer_reviews_text: CustomerReviewsText = Field(..., alias='customerReviewsText')
@@ -186,6 +217,7 @@ class CustomerReviews(BaseModel):
     value: int | float
 
 class Entity(BaseModel):
+    model_config = ConfigDict(defer_build=True)
     buy_box_actions: list[None] = Field(..., alias='buyBoxActions')
     degradations: list[None]
     display_title: str = Field(..., alias='displayTitle')
@@ -212,10 +244,12 @@ class Entity(BaseModel):
     customer_reviews: CustomerReviews | None = Field(None, alias='customerReviews')
 
 class EntitlementCues1(BaseModel):
+    model_config = ConfigDict(defer_build=True)
     entitled_carousel: str = Field(..., alias='entitledCarousel')
     offer_type: str = Field(..., alias='offerType')
 
 class Action1(BaseModel):
+    model_config = ConfigDict(defer_build=True)
     analytics: dict[str, Any]
     label: str
     metadata: dict[str, Any]
@@ -223,10 +257,12 @@ class Action1(BaseModel):
     url: str
 
 class Badge(BaseModel):
+    model_config = ConfigDict(defer_build=True)
     badge_text: str = Field(..., alias='badgeText')
     badge_type: str = Field(..., alias='badgeType')
 
 class Container(BaseModel):
+    model_config = ConfigDict(defer_build=True)
     container_type: str = Field(..., alias='containerType')
     entities: list[Entity]
     entitlement_cues: EntitlementCues1 | None = Field(None, alias='entitlementCues')
@@ -242,6 +278,7 @@ class Container(BaseModel):
     badges: list[Badge] | None = None
 
 class FeatureSwitches(BaseModel):
+    model_config = ConfigDict(defer_build=True)
     use_post_for_enrichment: bool = Field(..., alias='usePostForEnrichment')
     disable_win_app_max_containers_limit: bool = Field(..., alias='disableWinAppMaxContainersLimit')
     is_pagination_limited_on_m_shop: bool = Field(..., alias='isPaginationLimitedOnMShop')
@@ -254,17 +291,21 @@ class FeatureSwitches(BaseModel):
     disable_storefront_tvod_checkout: bool = Field(..., alias='disableStorefrontTvodCheckout')
 
 class Availability(BaseModel):
+    model_config = ConfigDict(defer_build=True)
     description: str
     severity: str
 
 class Metadata(BaseModel):
+    model_config = ConfigDict(defer_build=True)
     availability: Availability
 
 class PageMetadata1(BaseModel):
+    model_config = ConfigDict(defer_build=True)
     hide_page_title: bool = Field(..., alias='hidePageTitle')
     should_generate_json_ld: bool = Field(..., alias='shouldGenerateJsonLD')
 
 class Strings(BaseModel):
+    model_config = ConfigDict(defer_build=True)
     dv_web_aria_label_filter_item: str = Field(..., alias='DV_WEB_ARIA_LABEL_FILTER_ITEM')
     dv_web_aria_previous_title: str = Field(..., alias='DV_WEB_ARIA_PREVIOUS_TITLE')
     dv_web_pwa_first_launch_modal_learn_more: str = Field(..., alias='DV_WEB_PWA_First_LAUNCH_MODAL_LEARN_MORE')
@@ -339,36 +380,45 @@ class Strings(BaseModel):
     dv_dp_tr_disliked_aria: str = Field(..., alias='DV_DP_TR_disliked_aria')
 
 class SwiftPageParameters(BaseModel):
+    model_config = ConfigDict(defer_build=True)
     page_id: str = Field(..., alias='pageId')
     page_type: str = Field(..., alias='pageType')
 
 class RequestFeatureSwitches(BaseModel):
+    model_config = ConfigDict(defer_build=True)
     horizontal_pagination: bool = Field(..., alias='HorizontalPagination')
 
 class CustomerState(BaseModel):
+    model_config = ConfigDict(defer_build=True)
     is_robotic: bool = Field(..., alias='isRobotic')
 
 class FeatureSwitches1(BaseModel):
+    model_config = ConfigDict(defer_build=True)
     show_floating_join_prime_button: bool = Field(..., alias='showFloatingJoinPrimeButton')
 
 class Metadata1(BaseModel):
+    model_config = ConfigDict(defer_build=True)
     availability: Availability
 
 class Image(BaseModel):
+    model_config = ConfigDict(defer_build=True)
     alt_text: str = Field(..., alias='altText')
     url: str
 
 class Branding(BaseModel):
+    model_config = ConfigDict(defer_build=True)
     image: Image
     label: str
     ref_marker: str = Field(..., alias='refMarker')
     url: str
 
 class NavSection(BaseModel):
+    model_config = ConfigDict(defer_build=True)
     desktop: str
     mobile: str
 
 class SubNode(BaseModel):
+    model_config = ConfigDict(defer_build=True)
     field__type: str = Field(..., alias='__type')
     id: str
     label: str
@@ -376,11 +426,13 @@ class SubNode(BaseModel):
     url: str
 
 class SubMenuItem(BaseModel):
+    model_config = ConfigDict(defer_build=True)
     id: str
     sub_nodes: list[SubNode] = Field(..., alias='subNodes')
     label: str | None = None
 
 class NavigationNode(BaseModel):
+    model_config = ConfigDict(defer_build=True)
     field__type: str = Field(..., alias='__type')
     id: str
     label: str
@@ -393,14 +445,17 @@ class NavigationNode(BaseModel):
     icon: str | None = None
 
 class Query2(BaseModel):
+    model_config = ConfigDict(defer_build=True)
     ie: str
     ref_: str
 
 class SubmitSearchDestructuredEndpoint(BaseModel):
+    model_config = ConfigDict(defer_build=True)
     partial_url: str = Field(..., alias='partialURL')
     query: Query2
 
 class SearchBar(BaseModel):
+    model_config = ConfigDict(defer_build=True)
     clear_search_label: str = Field(..., alias='clearSearchLabel')
     close_search_alt_text: str = Field(..., alias='closeSearchAltText')
     is_search_suggestions_disabled: bool = Field(..., alias='isSearchSuggestionsDisabled')
@@ -411,6 +466,7 @@ class SearchBar(BaseModel):
     submit_search_endpoint: str = Field(..., alias='submitSearchEndpoint')
 
 class Nav(BaseModel):
+    model_config = ConfigDict(defer_build=True)
     aria_label: str = Field(..., alias='ariaLabel')
     branding: Branding
     collapsed_nav_browse_label: str = Field(..., alias='collapsedNavBrowseLabel')
@@ -419,6 +475,7 @@ class Nav(BaseModel):
     search_bar: SearchBar = Field(..., alias='searchBar')
 
 class SitewideNavigationBar1(BaseModel):
+    model_config = ConfigDict(defer_build=True)
     customer_state: CustomerState = Field(..., alias='customerState')
     feature_switches: FeatureSwitches1 = Field(..., alias='featureSwitches')
     is_sticky: bool = Field(..., alias='isSticky')
@@ -429,15 +486,19 @@ class SitewideNavigationBar1(BaseModel):
     is_roadblocked: bool = Field(..., alias='isRoadblocked')
 
 class SitewideInlineScriptsTop1(BaseModel):
+    model_config = ConfigDict(defer_build=True)
     hide_footer_gap: bool = Field(..., alias='hideFooterGap')
 
 class SitewideInlineScriptsBottom1(BaseModel):
+    model_config = ConfigDict(defer_build=True)
     hide_footer_gap: bool = Field(..., alias='hideFooterGap')
 
 class Metadata2(BaseModel):
+    model_config = ConfigDict(defer_build=True)
     availability: Availability
 
 class SitewideConditional(BaseModel):
+    model_config = ConfigDict(defer_build=True)
     degradations: list[None]
     features: dict[str, Any]
     metadata: Metadata2
@@ -446,10 +507,12 @@ class SitewideConditional(BaseModel):
     privacy_prefs_csrf_token: str = Field(..., alias='privacyPrefsCsrfToken')
 
 class SitewideAlexa(BaseModel):
+    model_config = ConfigDict(defer_build=True)
     device_config_id: str = Field(..., alias='deviceConfigId')
     iframe_origin: str = Field(..., alias='iframeOrigin')
 
 class Sitewide(BaseModel):
+    model_config = ConfigDict(defer_build=True)
     sitewide_navigation_bar: SitewideNavigationBar1 = Field(..., alias='sitewide-navigation-bar')
     sitewide_inline_scripts_top: SitewideInlineScriptsTop1 = Field(..., alias='sitewide-inline-scripts-top')
     sitewide_inline_scripts_bottom: SitewideInlineScriptsBottom1 = Field(..., alias='sitewide-inline-scripts-bottom')
@@ -457,6 +520,7 @@ class Sitewide(BaseModel):
     sitewide_alexa: SitewideAlexa = Field(..., alias='sitewide-alexa')
 
 class Body(BaseModel):
+    model_config = ConfigDict(defer_build=True)
     containers: list[Container]
     feature_switches: FeatureSwitches = Field(..., alias='featureSwitches')
     has_failed: bool = Field(..., alias='hasFailed')
@@ -475,14 +539,17 @@ class Body(BaseModel):
     sitewide: Sitewide
 
 class QueryParameters(BaseModel):
+    model_config = ConfigDict(defer_build=True)
     phrase: list[str]
     dv_web_app_client_version: list[str] = Field(..., alias='dvWebAppClientVersion')
 
 class Contingencies(BaseModel):
+    model_config = ConfigDict(defer_build=True)
     is_testing: bool = Field(..., alias='isTesting')
     values: dict[str, Any]
 
 class RequestContext(BaseModel):
+    model_config = ConfigDict(defer_build=True)
     customer_id: None = Field(..., alias='customerID')
     user_agent: str = Field(..., alias='userAgent')
     is_internal: bool = Field(..., alias='isInternal')
@@ -514,10 +581,12 @@ class RequestContext(BaseModel):
     locale: str
 
 class Weblab(BaseModel):
+    model_config = ConfigDict(defer_build=True)
     weblab_name: str = Field(..., alias='weblabName')
     treatment_name: str = Field(..., alias='treatmentName')
 
 class ClickstreamData(BaseModel):
+    model_config = ConfigDict(defer_build=True)
     page_type: str = Field(..., alias='pageType')
     sub_page_type: str = Field(..., alias='subPageType')
     request_id: str = Field(..., alias='requestId')
@@ -531,10 +600,12 @@ class ClickstreamData(BaseModel):
     site_variant: str = Field(..., alias='siteVariant')
 
 class Profile(BaseModel):
+    model_config = ConfigDict(defer_build=True)
     age_group: str = Field(..., alias='ageGroup')
     is_child: bool = Field(..., alias='isChild')
 
 class FeaturePivots(BaseModel):
+    model_config = ConfigDict(defer_build=True)
     dv_web_feedback_widget_scheme_1382103: bool = Field(..., alias='DV_WEB_FEEDBACK_WIDGET_SCHEME_1382103')
     dv_web_linear_age_restriction_sign_in_explore_scheme_1445266: bool = Field(..., alias='DV_WEB_LINEAR_AGE_RESTRICTION_SIGN_IN_EXPLORE_SCHEME_1445266')
     is_agent_self_declaration_enabled: bool = Field(..., alias='isAgentSelfDeclarationEnabled')
@@ -586,9 +657,11 @@ class FeaturePivots(BaseModel):
     pv_web_lighthouse_1438707: bool = Field(..., alias='PV_WEB_LIGHTHOUSE_1438707')
 
 class Resiliency(BaseModel):
+    model_config = ConfigDict(defer_build=True)
     resiliency_version: str = Field(..., alias='resiliencyVersion')
 
 class GlobalStore(BaseModel):
+    model_config = ConfigDict(defer_build=True)
     request_context: RequestContext = Field(..., alias='RequestContext')
     clickstream_data: ClickstreamData = Field(..., alias='ClickstreamData')
     site_variant: str = Field(..., alias='SiteVariant')
@@ -599,6 +672,7 @@ class GlobalStore(BaseModel):
     cross_domain_sso_url: None = Field(..., alias='CrossDomainSSOUrl')
 
 class Config(BaseModel):
+    model_config = ConfigDict(defer_build=True)
     delay_loading_indicator: bool = Field(..., alias='delayLoadingIndicator')
     csn_deny_list: list[str] = Field(..., alias='csnDenyList')
     disable_downloads_sync: bool = Field(..., alias='disableDownloadsSync')
@@ -606,6 +680,7 @@ class Config(BaseModel):
     force_fake_navigation_api: bool = Field(..., alias='forceFakeNavigationAPI')
 
 class SearchModel(BaseModel):
+    model_config = ConfigDict(defer_build=True)
     head: Head
     body: Body
     global_store: GlobalStore = Field(..., alias='globalStore')
