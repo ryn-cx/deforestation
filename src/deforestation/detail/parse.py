@@ -3,10 +3,10 @@
 
 from __future__ import annotations
 
+import re
 from typing import Any
 
 from deforestation.parsing import (
-    PRIME_BENEFIT_ID,
     detail_url,
     link_id_from_href,
     mapping,
@@ -17,8 +17,13 @@ from deforestation.parsing import (
     sequence,
     text_or_none,
     texts,
-    title_row,
 )
+
+PRIME_BENEFIT_ID = "Prime"
+"""The benefit a title included with Prime is offered under."""
+
+BENEFIT_ID_IN_LOGO = re.compile(r"/benefit-id/[^/]+/([^/]+)/logos/")
+"""Where the benefit a title is offered under is written into its provider logo."""
 
 IMAGE_NAMES = {
     "covershot": "covershot",
@@ -417,4 +422,48 @@ def _channel_name(label: Any) -> str | None:  # noqa: ANN401 - Any JSON value.
 def _containers(btf_state: dict[str, Any], page_id: str) -> list[dict[str, Any]]:
     """Return the rows of other titles the page carries."""
     listed_containers = sequence(mapping(btf_state.get("containers")).get(page_id))
-    return [title_row(container) for container in listed_containers]
+    return [_title_row(container) for container in listed_containers]
+
+
+# TODO: Validate
+def _title_card(entity: Any) -> dict[str, Any]:  # noqa: ANN401 - Any JSON value.
+    """Return one title as a row of titles lists it."""
+    listed_title = mapping(entity)
+    link_id = link_id_from_href(mapping(listed_title.get("link")).get("url"))
+    cover = mapping(mapping(listed_title.get("images")).get("cover"))
+    maturity_rating_badge = mapping(listed_title.get("maturityRatingBadge"))
+    return {
+        "title_id": text_or_none(listed_title.get("titleID")),
+        "link_id": link_id,
+        "url": detail_url(link_id),
+        "title": text_or_none(listed_title.get("title")),
+        "synopsis": text_or_none(listed_title.get("synopsis")),
+        "entity_type": text_or_none(listed_title.get("entityType")),
+        "release_year": text_or_none(listed_title.get("releaseYear")),
+        "runtime": text_or_none(listed_title.get("runtime")),
+        "image_url": text_or_none(cover.get("url")),
+        "maturity_rating": text_or_none(maturity_rating_badge.get("displayText")),
+        "benefit_id": _benefit_id(listed_title),
+    }
+
+
+# TODO: Validate
+def _benefit_id(entity: Any) -> str | None:  # noqa: ANN401 - Any JSON value.
+    """Return the benefit a title is offered under, read off its provider logo."""
+    cues = mapping(mapping(entity).get("entitlementCues"))
+    logo_url = mapping(cues.get("providerLogo")).get("imageUrl")
+    if not logo_url:
+        return None
+    found = BENEFIT_ID_IN_LOGO.search(str(logo_url))
+    return found[1] if found else None
+
+
+# TODO: Validate
+def _title_row(container: Any) -> dict[str, Any]:  # noqa: ANN401 - Any JSON value.
+    """Return one row of titles, such as what customers also watched."""
+    row = mapping(container)
+    return {
+        "title": text_or_none(row.get("title")),
+        "container_type": text_or_none(row.get("containerType")),
+        "titles": [_title_card(entity) for entity in sequence(row.get("entities"))],
+    }

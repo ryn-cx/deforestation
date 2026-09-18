@@ -19,7 +19,6 @@ from deforestation.exceptions import (
     RedirectedError,
     ResourceNotFoundError,
 )
-from deforestation.search import Search
 from deforestation.search_suggestions import SearchSuggestions
 
 logger = getLogger(__name__)
@@ -67,7 +66,6 @@ class Deforestation:
 
         self.detail = Detail(self)
         self.detail_widgets = DetailWidgets(self)
-        self.search = Search(self)
         self.search_suggestions = SearchSuggestions(self)
 
     # TODO: Validate

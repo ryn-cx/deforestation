@@ -63,8 +63,8 @@ class TitleNotFoundError(ResourceNotFoundError):
 class RedirectedError(DeforestationError):
     """Raised when a page answers with a redirect rather than with its data.
 
-    A redirect means the request does not name a page. An empty search query is
-    redirected to the storefront instead of being rejected, for example.
+    A redirect means the request does not name the page it was asked for, so
+    what it points at is where the page it does name is.
     """
 
     # TODO: Validate

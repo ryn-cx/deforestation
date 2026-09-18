@@ -111,19 +111,6 @@ def test_episode_list(client: Deforestation) -> None:
 
 
 # TODO: Validate
-def test_search(client: Deforestation) -> None:
-    results = client.search.load(recorded("SearchModel", "thundercats"))
-
-    assert results.query == "thundercats"
-    assert not results.has_failed
-    assert results.titles[0].title == "Thundercats"
-    assert results.titles[0].url.endswith(results.titles[0].link_id)
-    assert results.titles == [
-        card for container in results.containers for card in container.titles
-    ]
-
-
-# TODO: Validate
 def test_search_suggestions(client: Deforestation) -> None:
     suggestions = client.search_suggestions.load(
         recorded("SearchSuggestionsModel", "thunder"),
