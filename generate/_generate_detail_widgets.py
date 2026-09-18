@@ -11,7 +11,7 @@ from good_ass_pydantic_integrator.recordings import (
 
 from deforestation import Deforestation
 from deforestation.detail_widgets.parse import parse_detail_widgets
-from generate.constants import GENERATOR_PATHS
+from generate.constants import GENERATOR_PATHS, REGION
 from generate.parsed import rebuild_parsed_model
 
 MODEL_NAME = "DetailWidgetsModel"
@@ -54,4 +54,4 @@ def generate_detail_widgets(client: Deforestation) -> None:
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO, format="%(message)s")
-    generate_detail_widgets(Deforestation(build_client_automatically()))
+    generate_detail_widgets(Deforestation(build_client_automatically(), region=REGION))

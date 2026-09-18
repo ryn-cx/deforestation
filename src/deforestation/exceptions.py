@@ -73,3 +73,21 @@ class RedirectedError(DeforestationError):
         self.location = location
         self.response = response
         super().__init__(f"Request was redirected to {location}")
+
+
+# TODO: Validate
+class OutsideRegionError(DeforestationError):
+    """Raised when a region is asked for from a country it does not cover.
+
+    A page lists the ways to watch a title that the address asking for it can
+    use, so a region asked for from elsewhere answers with its own catalogue
+    but with only some of what that catalogue offers.
+    """
+
+    # TODO: Validate
+    def __init__(self, region: str, warning: str, response: str) -> None:
+        """Initialize with the region asked for and what the page warned."""
+        self.region = region
+        self.warning = warning
+        self.response = response
+        super().__init__(f"{region} was asked for from another country: {warning}")

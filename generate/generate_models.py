@@ -7,7 +7,8 @@ from good_ass_pydantic_integrator.recordings import generate_all
 
 import generate
 from deforestation import Deforestation
+from generate.constants import REGION
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO, format="%(message)s")
-    generate_all(generate, Deforestation(build_client_automatically()))
+    generate_all(generate, Deforestation(build_client_automatically(), region=REGION))

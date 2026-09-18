@@ -11,7 +11,7 @@ from good_ass_pydantic_integrator.recordings import (
 
 from deforestation import Deforestation
 from deforestation.search_suggestions.parse import parse_search_suggestions
-from generate.constants import GENERATOR_PATHS
+from generate.constants import GENERATOR_PATHS, REGION
 from generate.parsed import rebuild_parsed_model
 
 MODEL_NAME = "SearchSuggestionsModel"
@@ -42,4 +42,6 @@ def generate_search_suggestions(client: Deforestation) -> None:
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO, format="%(message)s")
-    generate_search_suggestions(Deforestation(build_client_automatically()))
+    generate_search_suggestions(
+        Deforestation(build_client_automatically(), region=REGION),
+    )

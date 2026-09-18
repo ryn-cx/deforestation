@@ -5,6 +5,9 @@ from pathlib import Path
 
 from good_ass_pydantic_integrator.recordings import GeneratorPaths
 
+REGION = "US"
+"""Which region the recorded responses are downloaded for."""
+
 GENERATOR_PATHS = GeneratorPaths(
     files_path=Path(__file__).parent / "_files",
     ids_path=Path(__file__).parent / "ids",

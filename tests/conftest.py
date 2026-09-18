@@ -8,4 +8,4 @@ from deforestation import Deforestation
 # TODO: Validate
 @pytest.fixture(scope="session")
 def client() -> Deforestation:
-    return Deforestation(build_client_automatically())
+    return Deforestation(build_client_automatically(), region="US")

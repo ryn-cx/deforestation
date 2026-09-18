@@ -9,7 +9,7 @@ class Images(BaseModel):
     covershot: str
     packshot: str
     titleshot: str
-    heroshot: str
+    heroshot: str | None
     title_logo: str | None
 
 class Channel(BaseModel):
@@ -98,7 +98,7 @@ class ParsedDetailModel(BaseModel):
     moods: list[str]
     included_with_prime: bool
     purchasable: bool
-    unavailable_message: None
+    unavailable_message: str | None
     channels: list[Channel]
     seasons: list[Season]
     episode_count: int | None

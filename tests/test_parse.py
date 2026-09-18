@@ -38,7 +38,7 @@ FIRST_EPISODE_DURATION = 1333
 # TODO: Validate
 @pytest.fixture(scope="session")
 def client() -> Deforestation:
-    return Deforestation()
+    return Deforestation(region="US")
 
 
 # TODO: Validate

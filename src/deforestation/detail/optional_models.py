@@ -1,7 +1,6 @@
-from typing import Self
+from typing import Any, Self
 from pydantic import ModelWrapValidatorHandler, PrivateAttr, model_validator
 from datetime import date
-from typing import Any
 from pydantic import BaseModel, ConfigDict
 
 class Images(BaseModel):
@@ -98,7 +97,7 @@ class ParsedDetailModel(BaseModel):
     moods: list[str] | None = None
     included_with_prime: bool | None = None
     purchasable: bool | None = None
-    unavailable_message: Any | None = None
+    unavailable_message: str | None = None
     channels: list[Channel] | None = None
     seasons: list[Season] | None = None
     episode_count: int | None = None
