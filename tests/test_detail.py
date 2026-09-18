@@ -23,7 +23,7 @@ TITLE_IDS = [
 def test_download(client: Deforestation, title_id: str) -> None:
     # An episode id lands on its season's page, so the page names the title it
     # settled on rather than the one that was asked for.
-    assert client.detail(title_id).body.atf.state.page_title_id
+    assert client.detail(title_id).page_id
 
 
 # TODO: Validate

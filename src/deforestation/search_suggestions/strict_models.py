@@ -1,33 +1,17 @@
-from typing import Self
+from typing import Any, Self
 from pydantic import ModelWrapValidatorHandler, PrivateAttr, model_validator
 from pydantic import ConfigDict
-from typing import Any
-from pydantic import BaseModel, Field
-
-class Availability(BaseModel):
-    model_config = ConfigDict(defer_build=True)
-    description: str
-    severity: str
-
-class Metadata(BaseModel):
-    model_config = ConfigDict(defer_build=True)
-    availability: Availability
-
-class Text(BaseModel):
-    model_config = ConfigDict(defer_build=True)
-    attrs: dict[str, Any]
-    string: str
+from pydantic import BaseModel
 
 class Suggestion(BaseModel):
     model_config = ConfigDict(defer_build=True)
-    href: str
-    ref_marker: str = Field(..., alias='refMarker')
-    text: Text
+    text: str
+    marked_up_text: str
+    query: str
+    url: str
 
-class SearchSuggestionsModel(BaseModel):
+class ParsedSearchSuggestionsModel(BaseModel):
     model_config = ConfigDict(defer_build=True)
-    field__type: str = Field(..., alias='__type')
-    metadata: Metadata
     suggestions: list[Suggestion]
     _raw_input: Any = PrivateAttr(default=None)
 

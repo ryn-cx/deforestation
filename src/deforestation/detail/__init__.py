@@ -3,10 +3,15 @@
 
 from __future__ import annotations
 
+import json
 from logging import NullHandler, getLogger
 
 from deforestation.base_api_endpoint import BaseEndpoint
-from deforestation.detail.models import DetailModel, model_validate_json
+from deforestation.detail.models import (
+    ParsedDetailModel,
+    model_validate_json,
+)
+from deforestation.detail.parse import parse_detail
 from deforestation.exceptions import ResourceNotFoundError, TitleNotFoundError
 
 logger = getLogger(__name__)
@@ -44,8 +49,8 @@ class Detail(BaseEndpoint):
     """
 
     # TODO: Validate
-    def __call__(self, title_id: str) -> DetailModel:
-        """Download and parse the title file."""
+    def __call__(self, title_id: str) -> ParsedDetailModel:
+        """Download the title file and read the essentials out of it."""
         log_id = self.get_log_id(self.__call__, locals())
         return self.load(self.download(title_id), log_id)
 
@@ -68,6 +73,9 @@ class Detail(BaseEndpoint):
             ) from err
 
     # TODO: Validate
-    def load(self, data: str, log_id: str = "") -> DetailModel:
-        """Load a title detail file into its model."""
-        return model_validate_json(data, log_id or self.default_log_id)
+    def load(self, data: str, log_id: str = "") -> ParsedDetailModel:
+        """Read a title detail file into the essentials of the title."""
+        return model_validate_json(
+            parse_detail(json.loads(data)),
+            log_id or self.default_log_id,
+        )

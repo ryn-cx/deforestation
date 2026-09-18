@@ -3,13 +3,15 @@
 
 from __future__ import annotations
 
+import json
 from logging import NullHandler, getLogger
 
 from deforestation.base_api_endpoint import BaseEndpoint
 from deforestation.search_suggestions.models import (
-    SearchSuggestionsModel,
+    ParsedSearchSuggestionsModel,
     model_validate_json,
 )
+from deforestation.search_suggestions.parse import parse_search_suggestions
 
 logger = getLogger(__name__)
 logger.addHandler(NullHandler())
@@ -42,8 +44,8 @@ class SearchSuggestions(BaseEndpoint):
     """
 
     # TODO: Validate
-    def __call__(self, prefix: str) -> SearchSuggestionsModel:
-        """Download and parse the search suggestions file."""
+    def __call__(self, prefix: str) -> ParsedSearchSuggestionsModel:
+        """Download the suggestions file and read the essentials out of it."""
         log_id = self.get_log_id(self.__call__, locals())
         return self.load(self.download(prefix), log_id)
 
@@ -59,6 +61,9 @@ class SearchSuggestions(BaseEndpoint):
         )
 
     # TODO: Validate
-    def load(self, data: str, log_id: str = "") -> SearchSuggestionsModel:
-        """Load a search suggestions file into its model."""
-        return model_validate_json(data, log_id or self.default_log_id)
+    def load(self, data: str, log_id: str = "") -> ParsedSearchSuggestionsModel:
+        """Read a search suggestions file into the searches it suggests."""
+        return model_validate_json(
+            parse_search_suggestions(json.loads(data)),
+            log_id or self.default_log_id,
+        )

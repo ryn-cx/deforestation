@@ -7,13 +7,15 @@ from good_ass_pydantic_integrator.recordings import (
     RecordingId,
     download_missing,
     load_ids,
-    rebuild_model,
 )
 
 from deforestation import Deforestation
+from deforestation.search.parse import parse_search
 from generate.constants import GENERATOR_PATHS
+from generate.parsed import rebuild_parsed_model
 
 MODEL_NAME = "SearchModel"
+PARSED_MODEL_NAME = "ParsedSearchModel"
 
 
 # TODO: Validate
@@ -31,7 +33,7 @@ QUERIES = load_ids(GENERATOR_PATHS, MODEL_NAME, SearchId)
 # TODO: Validate
 def generate_search(client: Deforestation) -> None:
     download_missing(GENERATOR_PATHS, MODEL_NAME, QUERIES, client)
-    rebuild_model(GENERATOR_PATHS, MODEL_NAME, SearchId)
+    rebuild_parsed_model(MODEL_NAME, PARSED_MODEL_NAME, parse_search)
 
 
 if __name__ == "__main__":

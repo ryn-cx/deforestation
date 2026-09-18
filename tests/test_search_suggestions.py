@@ -15,7 +15,4 @@ PREFIXES = [pytest.param("thunder", id="the start of a title")]
 @pytest.mark.parametrize("prefix", PREFIXES)
 def test_download(client: Deforestation, prefix: str) -> None:
     suggestions = client.search_suggestions(prefix)
-    # What was typed is wrapped in the markers the site renders it bold with.
-    assert all(
-        prefix in suggestion.text.string for suggestion in suggestions.suggestions
-    )
+    assert all(prefix in suggestion.text for suggestion in suggestions.suggestions)

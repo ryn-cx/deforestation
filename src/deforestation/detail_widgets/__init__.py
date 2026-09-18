@@ -8,7 +8,11 @@ from logging import NullHandler, getLogger
 from urllib.parse import quote
 
 from deforestation.base_api_endpoint import BaseEndpoint
-from deforestation.detail_widgets.models import DetailWidgetsModel, model_validate_json
+from deforestation.detail_widgets.models import (
+    ParsedDetailWidgetsModel,
+    model_validate_json,
+)
+from deforestation.detail_widgets.parse import parse_detail_widgets
 from deforestation.exceptions import ResourceNotFoundError, TitleNotFoundError
 
 logger = getLogger(__name__)
@@ -51,8 +55,8 @@ class DetailWidgets(BaseEndpoint):
         title_id: str,
         widget_token: str,
         widget_type: str = "EpisodeList",
-    ) -> DetailWidgetsModel:
-        """Download and parse the detail widgets file."""
+    ) -> ParsedDetailWidgetsModel:
+        """Download the detail widgets file and read the essentials out of it."""
         log_id = self.get_log_id(self.__call__, locals())
         return self.load(
             self.download(title_id, widget_token, widget_type),
@@ -89,6 +93,9 @@ class DetailWidgets(BaseEndpoint):
             ) from err
 
     # TODO: Validate
-    def load(self, data: str, log_id: str = "") -> DetailWidgetsModel:
-        """Load a detail widget file into its model."""
-        return model_validate_json(data, log_id or self.default_log_id)
+    def load(self, data: str, log_id: str = "") -> ParsedDetailWidgetsModel:
+        """Read a detail widget file into the episodes it lists."""
+        return model_validate_json(
+            parse_detail_widgets(json.loads(data)),
+            log_id or self.default_log_id,
+        )

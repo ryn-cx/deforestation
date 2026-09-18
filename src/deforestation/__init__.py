@@ -49,7 +49,9 @@ class Deforestation:
 
         The client holds one attribute per endpoint, so `client.detail(id)`
         looks a title up and `client.detail.download(id)` and
-        `client.detail.load(data)` are the halves of it.
+        `client.detail.load(data)` are the halves of it. An endpoint answers
+        with the essentials of what it was asked for, read out of the response
+        as JSON rather than through a model of the whole of it.
 
         Args:
             get_around_client: The HTTP client requests are sent through.

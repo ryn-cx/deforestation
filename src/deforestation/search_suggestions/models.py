@@ -1,4 +1,4 @@
-"""SearchSuggestionsModel, strict to a type checker, all-optional at runtime.
+"""ParsedSearchSuggestionsModel, strict to a type checker, all-optional at runtime.
 
 A type checker reads the strict model, so every field carries the type and
 the requiredness the schema recorded. At runtime the all-optional copy is imported
@@ -10,36 +10,27 @@ from typing import TYPE_CHECKING
 
 from good_ass_pydantic_integrator import load
 
-from .optional_models import SearchSuggestionsModel as OptionalModel
-from .strict_models import SearchSuggestionsModel as StrictModel
+from .optional_models import ParsedSearchSuggestionsModel as OptionalModel
+from .strict_models import ParsedSearchSuggestionsModel as StrictModel
 
 if TYPE_CHECKING:
     from .strict_models import (
-        Availability,
-        Metadata,
-        SearchSuggestionsModel,
+        ParsedSearchSuggestionsModel,
         Suggestion,
-        Text,
     )
 else:
     from .optional_models import (
-        Availability,
-        Metadata,
-        SearchSuggestionsModel,
+        ParsedSearchSuggestionsModel,
         Suggestion,
-        Text,
     )
 
 __all__ = [
-    "Availability",
-    "Metadata",
-    "SearchSuggestionsModel",
+    "ParsedSearchSuggestionsModel",
     "Suggestion",
-    "Text",
     "model_validate_json",
 ]
 
 
-def model_validate_json(data: str | bytes | object, log_id: str) -> SearchSuggestionsModel:
-    """Read a downloaded file into SearchSuggestionsModel."""
+def model_validate_json(data: str | bytes | object, log_id: str) -> ParsedSearchSuggestionsModel:
+    """Read a downloaded file into ParsedSearchSuggestionsModel."""
     return load.model_validate_json(StrictModel, OptionalModel, data, log_id)

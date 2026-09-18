@@ -7,13 +7,15 @@ from good_ass_pydantic_integrator.recordings import (
     RecordingId,
     download_named_missing,
     load_named_ids,
-    rebuild_model,
 )
 
 from deforestation import Deforestation
+from deforestation.detail_widgets.parse import parse_detail_widgets
 from generate.constants import GENERATOR_PATHS
+from generate.parsed import rebuild_parsed_model
 
 MODEL_NAME = "DetailWidgetsModel"
+PARSED_MODEL_NAME = "ParsedDetailWidgetsModel"
 
 
 # TODO: Validate
@@ -23,8 +25,7 @@ def unrecorded_page_token(client: Deforestation, season_id: str) -> str:
     A token is minted per response, so it is read off a fresh detail page rather
     than written down here.
     """
-    episode_list = client.detail(season_id).body.btf.state.episode_list
-    episode_pages = episode_list.actions.episode_pages
+    episode_pages = client.detail(season_id).episode_pages
     return next(page.token for page in episode_pages if not page.is_selected)
 
 
@@ -48,7 +49,7 @@ WIDGET_REQUESTS = load_named_ids(GENERATOR_PATHS, MODEL_NAME, DetailWidgetsId)
 # TODO: Validate
 def generate_detail_widgets(client: Deforestation) -> None:
     download_named_missing(GENERATOR_PATHS, MODEL_NAME, WIDGET_REQUESTS, client)
-    rebuild_model(GENERATOR_PATHS, MODEL_NAME, DetailWidgetsId)
+    rebuild_parsed_model(MODEL_NAME, PARSED_MODEL_NAME, parse_detail_widgets)
 
 
 if __name__ == "__main__":

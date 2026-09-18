@@ -17,13 +17,11 @@ def unrecorded_page_token(client: Deforestation) -> str:
     A token is minted per response, so it is read off a fresh detail page
     rather than written down here.
     """
-    episode_list = client.detail(SEASON_ID).body.btf.state.episode_list
-    episode_pages = episode_list.actions.episode_pages
+    episode_pages = client.detail(SEASON_ID).episode_pages
     return next(page.token for page in episode_pages if not page.is_selected)
 
 
 # TODO: Validate
 def test_download(client: Deforestation) -> None:
     widgets = client.detail_widgets(SEASON_ID, unrecorded_page_token(client))
-    episode_list = widgets.widgets.episode_list
-    assert len(episode_list.episodes) <= episode_list.episode_count
+    assert len(widgets.episodes) <= widgets.episode_count

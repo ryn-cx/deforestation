@@ -19,7 +19,7 @@ QUERIES = [
 # TODO: Validate
 @pytest.mark.parametrize("query", QUERIES)
 def test_download(client: Deforestation, query: str) -> None:
-    assert client.search(query).body.phrase == query
+    assert client.search(query).query == query
 
 
 # TODO: Validate
