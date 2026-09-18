@@ -1,6 +1,3 @@
-# TODO: Validate
-"""Rebuilds DetailModel."""
-
 from __future__ import annotations
 
 import json
@@ -16,19 +13,34 @@ from good_ass_pydantic_integrator.generate import (
     model_directory,
     recorded_responses,
 )
+from good_ass_pydantic_integrator.recordings import (
+    RecordingId,
+    download_missing,
+    drop_redundant_recordings,
+    load_ids,
+)
 
 from deforestation import Deforestation
-from generate.constants import DEFORESTATION_PATH, FILES_PATH
-from generate.utils import download_if_missing, drop_redundant_recordings, load_ids
+from generate.constants import GENERATOR_PATHS
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
 
     from good_ass_pydantic_integrator.constants import INPUT_TYPE, JSON_VALUE
 
-TITLE_IDS = load_ids("DetailModel")
-"""A season, an episode, a movie and a season that fits on one page."""
+MODEL_NAME = "DetailModel"
 
+
+# TODO: Validate
+class DetailId(RecordingId[Deforestation]):
+    title_id: str
+
+    # TODO: Validate
+    def download(self, client: Deforestation) -> str:
+        return client.detail.download(self.title_id)
+
+
+TITLE_IDS = load_ids(GENERATOR_PATHS, MODEL_NAME, DetailId)
 TITLE_ID_KEY = re.compile(r"^(?:[A-Z0-9]{10}|amzn1\.dv\.gti\.[0-9a-z-]+)$")
 
 logger = logging.getLogger(__name__)
@@ -78,11 +90,15 @@ def keyed_by_title_id(schema: JSON_VALUE) -> JSON_VALUE:
 
 # TODO: Validate
 def rebuild_detail_model() -> None:
-    recorded = GAPI("DetailModel")
-    for response in recorded_responses(FILES_PATH, "DetailModel", json.loads):
+    recorded = GAPI(MODEL_NAME)
+    for response in recorded_responses(
+        GENERATOR_PATHS.files_path,
+        MODEL_NAME,
+        json.loads,
+    ):
         recorded.add_object_from_dict(cast("INPUT_TYPE", response))
 
-    mapped = GAPI("DetailModel")
+    mapped = GAPI(MODEL_NAME)
     mapped.add_schema_from_dict(
         cast(
             "dict[str, INPUT_TYPE]",
@@ -90,26 +106,19 @@ def rebuild_detail_model() -> None:
         ),
     )
 
-    directory = model_directory(DEFORESTATION_PATH, "DetailModel")
+    directory = model_directory(GENERATOR_PATHS.package_path, MODEL_NAME)
     logger.info("Writing DetailModel.")
     mapped.write_json_schema_to_file(directory / "models.json")
     mapped.write_strict_models_to_file(directory / "strict_models.py")
     mapped.write_optional_models_to_file(directory / "optional_models.py")
     mapped.write_models_to_file(directory / "models.py")
     drop_names_missing_from_optional_models(directory)
-    drop_redundant_recordings(FILES_PATH, "DetailModel")
+    drop_redundant_recordings(GENERATOR_PATHS, MODEL_NAME, DetailId)
 
 
 # TODO: Validate
 def generate_detail(client: Deforestation) -> None:
-    """Rebuild DetailModel."""
-    for title_id in TITLE_IDS:
-        download_if_missing(
-            FILES_PATH,
-            "DetailModel",
-            title_id,
-            lambda title_id=title_id: client.detail.download(title_id),
-        )
+    download_missing(GENERATOR_PATHS, MODEL_NAME, TITLE_IDS, client)
     rebuild_detail_model()
 
 

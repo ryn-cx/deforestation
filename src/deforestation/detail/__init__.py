@@ -15,7 +15,7 @@ logger.addHandler(NullHandler())
 
 # TODO: Validate
 class Detail(BaseEndpoint):
-    """Manage the title detail file.
+    """Contains the title detail.
 
     A movie, a series, a season and an episode are all asked for the same way,
     but only a movie and a season are a page: an episode id lands on its
@@ -45,7 +45,7 @@ class Detail(BaseEndpoint):
 
     # TODO: Validate
     def __call__(self, title_id: str) -> DetailModel:
-        """Look the title up and return the model it is read into."""
+        """Download and parse the title file."""
         log_id = self.get_log_id(self.__call__, locals())
         return self.load(self.download(title_id), log_id)
 
@@ -69,5 +69,5 @@ class Detail(BaseEndpoint):
 
     # TODO: Validate
     def load(self, data: str, log_id: str = "") -> DetailModel:
-        """Read a downloaded title detail file into its model."""
+        """Load a title detail file into its model."""
         return model_validate_json(data, log_id or self.default_log_id)

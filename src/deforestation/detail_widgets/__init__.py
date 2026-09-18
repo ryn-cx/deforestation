@@ -17,7 +17,7 @@ logger.addHandler(NullHandler())
 
 # TODO: Validate
 class DetailWidgets(BaseEndpoint):
-    """Manage the detail widget file.
+    """Contains the detail widget.
 
     A detail page only carries the first 24 episodes of a season, and the rest
     are reached a page at a time through the `EpisodeList` tokens the page
@@ -52,7 +52,7 @@ class DetailWidgets(BaseEndpoint):
         widget_token: str,
         widget_type: str = "EpisodeList",
     ) -> DetailWidgetsModel:
-        """Look one widget of a title's page up and return its model."""
+        """Download and parse the detail widgets file."""
         log_id = self.get_log_id(self.__call__, locals())
         return self.load(
             self.download(title_id, widget_token, widget_type),
@@ -90,5 +90,5 @@ class DetailWidgets(BaseEndpoint):
 
     # TODO: Validate
     def load(self, data: str, log_id: str = "") -> DetailWidgetsModel:
-        """Read a downloaded detail widget file into its model."""
+        """Load a detail widget file into its model."""
         return model_validate_json(data, log_id or self.default_log_id)

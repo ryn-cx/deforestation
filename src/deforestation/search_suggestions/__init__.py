@@ -17,7 +17,7 @@ logger.addHandler(NullHandler())
 
 # TODO: Validate
 class SearchSuggestions(BaseEndpoint):
-    """Manage the search suggestions file.
+    """Contains the search suggestions.
 
     A suggestion is a query rather than a title, so what it links to is the
     search it stands for and not a detail page.
@@ -43,7 +43,7 @@ class SearchSuggestions(BaseEndpoint):
 
     # TODO: Validate
     def __call__(self, prefix: str) -> SearchSuggestionsModel:
-        """Look the suggestions for what has been typed up and return them."""
+        """Download and parse the search suggestions file."""
         log_id = self.get_log_id(self.__call__, locals())
         return self.load(self.download(prefix), log_id)
 
@@ -60,5 +60,5 @@ class SearchSuggestions(BaseEndpoint):
 
     # TODO: Validate
     def load(self, data: str, log_id: str = "") -> SearchSuggestionsModel:
-        """Read a downloaded search suggestions file into its model."""
+        """Load a search suggestions file into its model."""
         return model_validate_json(data, log_id or self.default_log_id)

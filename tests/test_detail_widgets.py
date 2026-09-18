@@ -3,27 +3,11 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-import pytest
-
-from deforestation.detail_widgets.models import DetailWidgetsModel
-from tests.utils import RecordedEndpoint
-
 if TYPE_CHECKING:
     from deforestation import Deforestation
 
 SEASON_ID = "B005C8DB7E"
-
-NAMES = [
-    pytest.param(
-        f"{SEASON_ID} episodes 25-33",
-        id="the page of a season its detail page does not carry",
-    ),
-]
-
-
-# TODO: Validate
-class DetailWidgetsTest(RecordedEndpoint):
-    MODEL = DetailWidgetsModel
+"""A season with more episodes than its detail page carries."""
 
 
 # TODO: Validate
@@ -39,20 +23,7 @@ def unrecorded_page_token(client: Deforestation) -> str:
 
 
 # TODO: Validate
-@pytest.mark.parametrize("name", NAMES)
-def test_download(client: Deforestation, name: str) -> None:
-    DetailWidgetsTest.download_test(
-        name,
-        lambda: client.detail_widgets.download(
-            SEASON_ID,
-            unrecorded_page_token(client),
-        ),
-    )
-
-
-# TODO: Validate
-@pytest.mark.parametrize("name", NAMES)
-def test_parse(client: Deforestation, name: str) -> None:
-    widgets = client.detail_widgets.load(DetailWidgetsTest.recorded_content(name))
+def test_download(client: Deforestation) -> None:
+    widgets = client.detail_widgets(SEASON_ID, unrecorded_page_token(client))
     episode_list = widgets.widgets.episode_list
     assert len(episode_list.episodes) <= episode_list.episode_count
