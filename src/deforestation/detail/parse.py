@@ -7,7 +7,10 @@ import re
 from typing import Any
 
 from deforestation.parsing import (
+    action_cards,
     detail_url,
+    episode,
+    episode_pages,
     link_id_from_href,
     mapping,
     named_urls,
@@ -192,26 +195,6 @@ def _episode_pages(btf_state: dict[str, Any]) -> list[dict[str, Any]]:
 
 
 # TODO: Validate
-def episode_pages(actions: dict[str, Any]) -> list[dict[str, Any]]:
-    """Return the pages an episode list is split over, as its actions list them.
-
-    A page other than the selected one is downloaded with its token through the
-    detail widgets endpoint.
-    """
-    pages: list[dict[str, Any]] = []
-    for listed_page in sequence(actions.get("episodePages")):
-        page = mapping(listed_page)
-        pages.append(
-            {
-                "token": text_or_none(page.get("token")),
-                "text": text_or_none(mapping(page.get("text")).get("string")),
-                "is_selected": bool(page.get("isSelected")),
-            },
-        )
-    return pages
-
-
-# TODO: Validate
 def _episodes(btf_state: dict[str, Any]) -> list[dict[str, Any]]:
     """Return the episodes the season's own page carries."""
     episode_list = mapping(btf_state.get("episodeList"))
@@ -230,32 +213,6 @@ def _episodes(btf_state: dict[str, Any]) -> list[dict[str, Any]]:
 
 
 # TODO: Validate
-def episode(
-    episode_key: str,
-    detail: Any,  # noqa: ANN401 - Any JSON value.
-    compact_gti: Any,  # noqa: ANN401 - Any JSON value.
-    *,
-    available: bool,
-) -> dict[str, Any]:
-    """Return one episode, as the page that lists it gives it."""
-    episode_detail = mapping(detail)
-    link_id = text_or_none(compact_gti)
-    return {
-        "key": episode_key,
-        "link_id": link_id,
-        "url": detail_url(link_id),
-        "title": text_or_none(episode_detail.get("title")),
-        "episode_number": number_or_none(episode_detail.get("episodeNumber")),
-        "synopsis": text_or_none(episode_detail.get("synopsis")),
-        "duration": number_or_none(episode_detail.get("duration")),
-        "runtime": text_or_none(episode_detail.get("runtime")),
-        "release_date": release_date(episode_detail.get("releaseDate")),
-        "image_url": pick_image(episode_detail.get("images")),
-        "is_available": available,
-    }
-
-
-# TODO: Validate
 def _episode_available(btf_state: dict[str, Any], episode_key: str) -> bool:
     """Report whether the episode is offered a way to watch it."""
     episode_action = mapping(mapping(btf_state.get("action")).get("btf")).get(
@@ -264,18 +221,6 @@ def _episode_available(btf_state: dict[str, Any], episode_key: str) -> bool:
     if not episode_action:
         return True
     return any(mapping(card).get("actions") for card in action_cards(episode_action))
-
-
-# TODO: Validate
-def action_cards(action: Any) -> list[Any]:  # noqa: ANN401 - Any JSON value.
-    """Return every card an action offers a way to watch a title on."""
-    cards: list[Any] = []
-    for listed_action in sequence(mapping(action).get("primaryActions")):
-        payload = mapping(mapping(listed_action).get("payload"))
-        if card := payload.get("expandingCard"):
-            cards.append(card)
-        cards += sequence(payload.get("cardOptions"))
-    return cards
 
 
 # TODO: Validate

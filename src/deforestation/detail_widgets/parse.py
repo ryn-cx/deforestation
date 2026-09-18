@@ -5,8 +5,15 @@ from __future__ import annotations
 
 from typing import Any
 
-from deforestation.detail.parse import action_cards, episode, episode_pages
-from deforestation.parsing import mapping, number_or_none, sequence, text_or_none
+from deforestation.parsing import (
+    action_cards,
+    episode,
+    episode_pages,
+    mapping,
+    number_or_none,
+    sequence,
+    text_or_none,
+)
 
 
 # TODO: Validate
@@ -34,3 +41,23 @@ def _episode(listed_episode: Any) -> dict[str, Any]:  # noqa: ANN401 - Any JSON 
         mapping(entry.get("self")).get("compactGTI"),
         available=bool(action_cards(entry.get("action"))),
     )
+
+
+# TODO: Validate
+def detail_with_all_episodes(
+    detail: dict[str, Any],
+    widget_pages: list[dict[str, Any]],
+) -> dict[str, Any]:
+    pages = detail["episode_pages"]
+    if not pages:
+        return detail
+
+    episodes: list[dict[str, Any]] = []
+    downloaded_index = 0
+    for page in pages:
+        if page["is_selected"]:
+            episodes += detail["episodes"]
+        else:
+            episodes += widget_pages[downloaded_index]["episodes"]
+            downloaded_index += 1
+    return {**detail, "episodes": episodes}

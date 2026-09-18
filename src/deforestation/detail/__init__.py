@@ -12,6 +12,10 @@ from deforestation.detail.models import (
     model_validate_json,
 )
 from deforestation.detail.parse import parse_detail
+from deforestation.detail_widgets.parse import (
+    detail_with_all_episodes,
+    parse_detail_widgets,
+)
 from deforestation.exceptions import (
     RedirectedError,
     ResourceNotFoundError,
@@ -43,6 +47,20 @@ class Detail(BaseEndpoint):
             return self._download(landing_title_id, log_id)
 
     # TODO: Validate
+    def download_all(self, title_id: str) -> list[str]:
+        log_id = self.get_log_id(self.download_all, locals())
+        detail_body = self.download(title_id)
+        detail = self.load(detail_body, log_id)
+        return [
+            detail_body,
+            *(
+                self._client.detail_widgets.download(detail.page_id, page.token)
+                for page in detail.episode_pages
+                if not page.is_selected
+            ),
+        ]
+
+    # TODO: Validate
     @staticmethod
     def _title_id(location: str) -> str:
         if found := TITLE_ID_IN_LOCATION.search(location):
@@ -70,5 +88,16 @@ class Detail(BaseEndpoint):
     def load(self, data: str, log_id: str = "") -> ParsedDetailModel:
         return model_validate_json(
             parse_detail(json.loads(data)),
+            log_id or self.default_log_id,
+        )
+
+    # TODO: Validate
+    def load_all(self, pages: list[str], log_id: str = "") -> ParsedDetailModel:
+        detail_body, *widget_bodies = pages
+        return model_validate_json(
+            detail_with_all_episodes(
+                parse_detail(json.loads(detail_body)),
+                [parse_detail_widgets(json.loads(body)) for body in widget_bodies],
+            ),
             log_id or self.default_log_id,
         )
