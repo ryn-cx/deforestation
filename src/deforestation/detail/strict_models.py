@@ -114,7 +114,7 @@ class AmazonRating(BaseModel):
     model_config = ConfigDict(defer_build=True)
     count: int
     count_formatted: str = Field(..., alias='countFormatted')
-    value: float
+    value: int | float
 
 class CastItem(BaseModel):
     model_config = ConfigDict(defer_build=True)
@@ -288,12 +288,6 @@ class FocusMessage(BaseModel):
     icon: str
     icon_type: str = Field(..., alias='iconType')
 
-class HighValueMessage(BaseModel):
-    model_config = ConfigDict(defer_build=True)
-    dv_message: DvMessage = Field(..., alias='dvMessage')
-    icon: str
-    icon_type: str | None = Field(None, alias='iconType')
-
 class InformationalMessage(BaseModel):
     model_config = ConfigDict(defer_build=True)
     dv_message: DvMessage = Field(..., alias='dvMessage')
@@ -310,14 +304,20 @@ class TitleMetadataBadge(BaseModel):
     entry_type: str = Field(..., alias='entryType')
     level: str
 
+class HighValueMessage(BaseModel):
+    model_config = ConfigDict(defer_build=True)
+    dv_message: DvMessage = Field(..., alias='dvMessage')
+    icon: str
+    icon_type: str | None = Field(None, alias='iconType')
+
 class Messages(BaseModel):
     model_config = ConfigDict(defer_build=True)
     entitlement_type: str = Field(..., alias='entitlementType')
     focus_message: FocusMessage = Field(..., alias='focusMessage')
-    high_value_message: HighValueMessage | None = Field(None, alias='highValueMessage')
     informational_messages: list[InformationalMessage] | None = Field(None, alias='informationalMessages')
     provider_logo: ProviderLogo | None = Field(None, alias='providerLogo')
     title_metadata_badge: TitleMetadataBadge | None = Field(None, alias='titleMetadataBadge')
+    high_value_message: HighValueMessage | None = Field(None, alias='highValueMessage')
 
 class PurchaseData(BaseModel):
     model_config = ConfigDict(defer_build=True)
@@ -438,17 +438,6 @@ class ExpandingCard(BaseModel):
     card_type: str = Field(..., alias='cardType')
     components: Components
 
-class Transaction1(BaseModel):
-    model_config = ConfigDict(defer_build=True)
-    asin: str
-    csrf_token: str = Field(..., alias='csrfToken')
-    csrf_token_workflow: str = Field(..., alias='csrfTokenWorkflow')
-    display_messages: list[None] = Field(..., alias='displayMessages')
-    label: str
-    offer_token: str = Field(..., alias='offerToken')
-    purchase_data: PurchaseData = Field(..., alias='purchaseData')
-    ref_marker: str = Field(..., alias='refMarker')
-
 class Subscription1(BaseModel):
     model_config = ConfigDict(defer_build=True)
     app_fallback_url: str = Field(..., alias='appFallbackUrl')
@@ -461,18 +450,77 @@ class Subscription1(BaseModel):
     s_type: str = Field(..., alias='sType')
     signup_link: str = Field(..., alias='signupLink')
 
+class Transaction1(BaseModel):
+    model_config = ConfigDict(defer_build=True)
+    asin: str
+    csrf_token: str = Field(..., alias='csrfToken')
+    csrf_token_workflow: str = Field(..., alias='csrfTokenWorkflow')
+    display_messages: list[None] = Field(..., alias='displayMessages')
+    label: str
+    offer_token: str = Field(..., alias='offerToken')
+    purchase_data: PurchaseData = Field(..., alias='purchaseData')
+    ref_marker: str = Field(..., alias='refMarker')
+
 class Payload2(BaseModel):
     model_config = ConfigDict(defer_build=True)
     payload_type: str = Field(..., alias='payloadType')
-    transaction: Transaction1 | None = None
     subscription: Subscription1 | None = None
+    transaction: Transaction1 | None = None
+
+class Presentation1(BaseModel):
+    model_config = ConfigDict(defer_build=True)
+    primary_label: str = Field(..., alias='primaryLabel')
+    ref_marker: str = Field(..., alias='refMarker')
+    icon: str | None = None
 
 class Action2(BaseModel):
     model_config = ConfigDict(defer_build=True)
     action_type: str = Field(..., alias='actionType')
     is_selected: bool = Field(..., alias='isSelected')
     payload: Payload2
-    presentation: Presentation
+    presentation: Presentation1
+
+class TextComponent3(BaseModel):
+    model_config = ConfigDict(defer_build=True)
+    tags: dict[str, Any]
+    text: str
+    text_type: str = Field(..., alias='textType')
+
+class Tags2(BaseModel):
+    model_config = ConfigDict(defer_build=True)
+    alt_text: str = Field(..., alias='ALT_TEXT')
+
+class ImageListItem(BaseModel):
+    model_config = ConfigDict(defer_build=True)
+    tags: Tags2
+    url: str
+
+class ImageListComponent(BaseModel):
+    model_config = ConfigDict(defer_build=True)
+    image_list: list[ImageListItem] = Field(..., alias='imageList')
+
+class ComponentPayload4(BaseModel):
+    model_config = ConfigDict(defer_build=True)
+    text_component: TextComponent3 | None = Field(None, alias='textComponent')
+    image_list_component: ImageListComponent | None = Field(None, alias='imageListComponent')
+
+class ComponentListItem(BaseModel):
+    model_config = ConfigDict(defer_build=True)
+    component_payload: ComponentPayload4 = Field(..., alias='componentPayload')
+    component_primitive: str = Field(..., alias='componentPrimitive')
+
+class MixedComponent(BaseModel):
+    model_config = ConfigDict(defer_build=True)
+    component_list: list[ComponentListItem] = Field(..., alias='componentList')
+
+class ComponentPayload3(BaseModel):
+    model_config = ConfigDict(defer_build=True)
+    mixed_component: MixedComponent = Field(..., alias='mixedComponent')
+
+class RelatedBenefits(BaseModel):
+    model_config = ConfigDict(defer_build=True)
+    component_payload: ComponentPayload3 = Field(..., alias='componentPayload')
+    component_primitive: str = Field(..., alias='componentPrimitive')
 
 class TextListItem(BaseModel):
     model_config = ConfigDict(defer_build=True)
@@ -484,25 +532,14 @@ class TextComponentCollection(BaseModel):
     model_config = ConfigDict(defer_build=True)
     text_list: list[TextListItem] = Field(..., alias='textList')
 
-class ComponentPayload3(BaseModel):
+class ComponentPayload5(BaseModel):
     model_config = ConfigDict(defer_build=True)
     text_component_collection: TextComponentCollection = Field(..., alias='textComponentCollection')
 
 class TransactionDetail1(BaseModel):
     model_config = ConfigDict(defer_build=True)
-    component_payload: ComponentPayload3 = Field(..., alias='componentPayload')
+    component_payload: ComponentPayload5 = Field(..., alias='componentPayload')
     component_primitive: str = Field(..., alias='componentPrimitive')
-
-class Tags2(BaseModel):
-    model_config = ConfigDict(defer_build=True)
-    brand_glow: str = Field(..., alias='BRAND_GLOW')
-    text_theme: str = Field(..., alias='TEXT_THEME')
-
-class TextComponent3(BaseModel):
-    model_config = ConfigDict(defer_build=True)
-    tags: Tags2
-    text: str
-    text_type: str = Field(..., alias='textType')
 
 class Tags3(BaseModel):
     model_config = ConfigDict(defer_build=True)
@@ -516,14 +553,25 @@ class LogoComponent1(BaseModel):
     tags: Tags3
     url: str
 
-class ComponentPayload4(BaseModel):
+class Tags4(BaseModel):
     model_config = ConfigDict(defer_build=True)
-    text_component: TextComponent3 = Field(..., alias='textComponent')
+    brand_glow: str = Field(..., alias='BRAND_GLOW')
+    text_theme: str = Field(..., alias='TEXT_THEME')
+
+class TextComponent4(BaseModel):
+    model_config = ConfigDict(defer_build=True)
+    tags: Tags4
+    text: str
+    text_type: str = Field(..., alias='textType')
+
+class ComponentPayload6(BaseModel):
+    model_config = ConfigDict(defer_build=True)
     logo_component: LogoComponent1 | None = Field(None, alias='logoComponent')
+    text_component: TextComponent4 = Field(..., alias='textComponent')
 
 class Banner(BaseModel):
     model_config = ConfigDict(defer_build=True)
-    component_payload: ComponentPayload4 = Field(..., alias='componentPayload')
+    component_payload: ComponentPayload6 = Field(..., alias='componentPayload')
     component_primitive: str = Field(..., alias='componentPrimitive')
 
 class IconTextListItem(BaseModel):
@@ -537,63 +585,21 @@ class IconTextListComponent(BaseModel):
     model_config = ConfigDict(defer_build=True)
     icon_text_list: list[IconTextListItem] = Field(..., alias='iconTextList')
 
-class ComponentPayload5(BaseModel):
+class ComponentPayload7(BaseModel):
     model_config = ConfigDict(defer_build=True)
     icon_text_list_component: IconTextListComponent = Field(..., alias='iconTextListComponent')
 
 class MotivatorMessaging1(BaseModel):
     model_config = ConfigDict(defer_build=True)
-    component_payload: ComponentPayload5 = Field(..., alias='componentPayload')
-    component_primitive: str = Field(..., alias='componentPrimitive')
-
-class TextComponent4(BaseModel):
-    model_config = ConfigDict(defer_build=True)
-    tags: dict[str, Any]
-    text: str
-    text_type: str = Field(..., alias='textType')
-
-class Tags4(BaseModel):
-    model_config = ConfigDict(defer_build=True)
-    alt_text: str = Field(..., alias='ALT_TEXT')
-
-class ImageListItem(BaseModel):
-    model_config = ConfigDict(defer_build=True)
-    tags: Tags4
-    url: str
-
-class ImageListComponent(BaseModel):
-    model_config = ConfigDict(defer_build=True)
-    image_list: list[ImageListItem] = Field(..., alias='imageList')
-
-class ComponentPayload7(BaseModel):
-    model_config = ConfigDict(defer_build=True)
-    text_component: TextComponent4 | None = Field(None, alias='textComponent')
-    image_list_component: ImageListComponent | None = Field(None, alias='imageListComponent')
-
-class ComponentListItem(BaseModel):
-    model_config = ConfigDict(defer_build=True)
     component_payload: ComponentPayload7 = Field(..., alias='componentPayload')
-    component_primitive: str = Field(..., alias='componentPrimitive')
-
-class MixedComponent(BaseModel):
-    model_config = ConfigDict(defer_build=True)
-    component_list: list[ComponentListItem] = Field(..., alias='componentList')
-
-class ComponentPayload6(BaseModel):
-    model_config = ConfigDict(defer_build=True)
-    mixed_component: MixedComponent = Field(..., alias='mixedComponent')
-
-class RelatedBenefits(BaseModel):
-    model_config = ConfigDict(defer_build=True)
-    component_payload: ComponentPayload6 = Field(..., alias='componentPayload')
     component_primitive: str = Field(..., alias='componentPrimitive')
 
 class Components1(BaseModel):
     model_config = ConfigDict(defer_build=True)
+    related_benefits: RelatedBenefits | None = Field(None, alias='RELATED_BENEFITS')
     transaction_detail: TransactionDetail1 = Field(..., alias='TRANSACTION_DETAIL')
     banner: Banner = Field(..., alias='BANNER')
     motivator_messaging: MotivatorMessaging1 | None = Field(None, alias='MOTIVATOR_MESSAGING')
-    related_benefits: RelatedBenefits | None = Field(None, alias='RELATED_BENEFITS')
 
 class CardOption(BaseModel):
     model_config = ConfigDict(defer_build=True)
@@ -621,25 +627,29 @@ class Playback(BaseModel):
     run_time: int = Field(..., alias='runTime')
     video_material_type: str = Field(..., alias='videoMaterialType')
 
+class Message1(BaseModel):
+    model_config = ConfigDict(defer_build=True)
+    attrs: dict[str, Any]
+    string: str
+
+class Message(BaseModel):
+    model_config = ConfigDict(defer_build=True)
+    message: Message1
+
 class Payload(BaseModel):
     model_config = ConfigDict(defer_build=True)
     expanding_card: ExpandingCard | None = Field(None, alias='expandingCard')
     payload_type: str = Field(..., alias='payloadType')
     card_options: list[CardOption] | None = Field(None, alias='cardOptions')
     playback: Playback | None = None
-
-class Presentation2(BaseModel):
-    model_config = ConfigDict(defer_build=True)
-    primary_label: str = Field(..., alias='primaryLabel')
-    ref_marker: str = Field(..., alias='refMarker')
-    icon: str | None = None
+    message: Message | None = None
 
 class PrimaryAction(BaseModel):
     model_config = ConfigDict(defer_build=True)
     action_type: str = Field(..., alias='actionType')
     is_selected: bool = Field(..., alias='isSelected')
     payload: Payload
-    presentation: Presentation2 | None = None
+    presentation: Presentation1 | None = None
 
 class ReactionAction(BaseModel):
     model_config = ConfigDict(defer_build=True)
@@ -1390,7 +1400,7 @@ class Subscription2(BaseModel):
     app_fallback_url: str = Field(..., alias='appFallbackUrl')
     app_subscription_url: str = Field(..., alias='appSubscriptionUrl')
     benefit_id: str = Field(..., alias='benefitId')
-    channel_link: str = Field(..., alias='channelLink')
+    channel_link: str | None = Field(None, alias='channelLink')
     display_messages: list[None] = Field(..., alias='displayMessages')
     label: str
     problems: list[None]
@@ -1417,9 +1427,15 @@ class Action4(BaseModel):
     payload: Payload5
     presentation: Presentation4
 
+class TextComponent5(BaseModel):
+    model_config = ConfigDict(defer_build=True)
+    tags: dict[str, Any]
+    text: str
+    text_type: str = Field(..., alias='textType')
+
 class ComponentPayload8(BaseModel):
     model_config = ConfigDict(defer_build=True)
-    text_component: TextComponent4 = Field(..., alias='textComponent')
+    text_component: TextComponent5 = Field(..., alias='textComponent')
 
 class TransactionDetail2(BaseModel):
     model_config = ConfigDict(defer_build=True)
@@ -1439,7 +1455,7 @@ class LogoComponent2(BaseModel):
 
 class ComponentPayload9(BaseModel):
     model_config = ConfigDict(defer_build=True)
-    text_component: TextComponent4 | None = Field(None, alias='textComponent')
+    text_component: TextComponent5 | None = Field(None, alias='textComponent')
     logo_component: LogoComponent2 | None = Field(None, alias='logoComponent')
 
 class Header1(BaseModel):
