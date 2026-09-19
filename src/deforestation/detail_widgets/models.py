@@ -17,18 +17,21 @@ if TYPE_CHECKING:
     from .strict_models import (
         Episode,
         EpisodePage,
+        Images,
         ParsedDetailWidgetsModel,
     )
 else:
     from .optional_models import (
         Episode,
         EpisodePage,
+        Images,
         ParsedDetailWidgetsModel,
     )
 
 __all__ = [
     "Episode",
     "EpisodePage",
+    "Images",
     "ParsedDetailWidgetsModel",
     "model_validate_json",
 ]

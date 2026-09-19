@@ -54,7 +54,7 @@ def test_series(client: Deforestation) -> None:
     assert page.entity_type == "TV Show"
     assert page.parent_title == "Thundercats"
     assert page.season_number == 1
-    assert page.image_url
+    assert page.images.covershot
     assert "Action" in page.genres
     # A series has no page of its own, so its first season stands for it.
     assert page.title_key == SERIES_ID

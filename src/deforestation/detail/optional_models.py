@@ -1,15 +1,33 @@
-from typing import Any, Self
+from typing import Self
 from pydantic import ModelWrapValidatorHandler, PrivateAttr, model_validator
 from datetime import date
+from typing import Any
 from pydantic import BaseModel, ConfigDict
 
 class Images(BaseModel):
     model_config = ConfigDict(extra='ignore', defer_build=True)
     covershot: str | None = None
+    covershot_thumbnail: str | None = None
     packshot: str | None = None
+    packshot_thumbnail: str | None = None
     titleshot: str | None = None
+    titleshot_thumbnail: str | None = None
     heroshot: str | None = None
+    heroshot_thumbnail: str | None = None
+    cover: Any | None = None
+    cover_thumbnail: Any | None = None
+    hero: Any | None = None
+    hero_thumbnail: Any | None = None
+    poster2x3: Any | None = None
+    poster2x3_thumbnail: Any | None = None
+    boxart: Any | None = None
+    boxart_thumbnail: Any | None = None
+    full_background_16x9: Any | None = None
+    full_background_16x9_thumbnail: Any | None = None
     title_logo: str | None = None
+    title_logo_thumbnail: str | None = None
+    provider_logo: str | None = None
+    provider_logo_thumbnail: str | None = None
 
 class Channel(BaseModel):
     model_config = ConfigDict(extra='ignore', defer_build=True)
@@ -25,6 +43,31 @@ class Season(BaseModel):
     url: str | None = None
     is_selected: bool | None = None
 
+class Images1(BaseModel):
+    model_config = ConfigDict(extra='ignore', defer_build=True)
+    covershot: str | None = None
+    covershot_thumbnail: str | None = None
+    packshot: str | None = None
+    packshot_thumbnail: str | None = None
+    titleshot: Any | None = None
+    titleshot_thumbnail: Any | None = None
+    heroshot: Any | None = None
+    heroshot_thumbnail: Any | None = None
+    cover: Any | None = None
+    cover_thumbnail: Any | None = None
+    hero: Any | None = None
+    hero_thumbnail: Any | None = None
+    poster2x3: Any | None = None
+    poster2x3_thumbnail: Any | None = None
+    boxart: Any | None = None
+    boxart_thumbnail: Any | None = None
+    full_background_16x9: Any | None = None
+    full_background_16x9_thumbnail: Any | None = None
+    title_logo: Any | None = None
+    title_logo_thumbnail: Any | None = None
+    provider_logo: Any | None = None
+    provider_logo_thumbnail: Any | None = None
+
 class Episode(BaseModel):
     model_config = ConfigDict(extra='ignore', defer_build=True)
     key: str | None = None
@@ -36,7 +79,7 @@ class Episode(BaseModel):
     duration: int | None = None
     runtime: str | None = None
     release_date: date | None = None
-    image_url: str | None = None
+    images: Images1 | None = None
     is_available: bool | None = None
     subscription_ids: list[str] | None = None
     purchasable: bool | None = None
@@ -46,6 +89,31 @@ class EpisodePage(BaseModel):
     token: str | None = None
     text: str | None = None
     is_selected: bool | None = None
+
+class Images2(BaseModel):
+    model_config = ConfigDict(extra='ignore', defer_build=True)
+    covershot: Any | None = None
+    covershot_thumbnail: Any | None = None
+    packshot: Any | None = None
+    packshot_thumbnail: Any | None = None
+    titleshot: Any | None = None
+    titleshot_thumbnail: Any | None = None
+    heroshot: Any | None = None
+    heroshot_thumbnail: Any | None = None
+    cover: str | None = None
+    cover_thumbnail: str | None = None
+    hero: str | None = None
+    hero_thumbnail: str | None = None
+    poster2x3: str | None = None
+    poster2x3_thumbnail: str | None = None
+    boxart: Any | None = None
+    boxart_thumbnail: Any | None = None
+    full_background_16x9: Any | None = None
+    full_background_16x9_thumbnail: Any | None = None
+    title_logo: str | None = None
+    title_logo_thumbnail: str | None = None
+    provider_logo: Any | None = None
+    provider_logo_thumbnail: Any | None = None
 
 class Title(BaseModel):
     model_config = ConfigDict(extra='ignore', defer_build=True)
@@ -57,7 +125,7 @@ class Title(BaseModel):
     entity_type: str | None = None
     release_year: str | None = None
     runtime: str | None = None
-    image_url: str | None = None
+    images: Images2 | None = None
     maturity_rating: str | None = None
     subscription_id: str | None = None
 
@@ -83,7 +151,6 @@ class ParsedDetailModel(BaseModel):
     release_year: int | None = None
     duration: int | None = None
     runtime: str | None = None
-    image_url: str | None = None
     images: Images | None = None
     genres: list[str] | None = None
     studios: list[str] | None = None

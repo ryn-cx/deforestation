@@ -11,12 +11,11 @@ from deforestation.parsing import (
     detail_url,
     episode,
     episode_pages,
+    images,
     link_id_from_href,
     mapping,
-    named_urls,
     number_or_none,
     offer_subscription_ids,
-    pick_image,
     release_date,
     sequence,
     text_or_none,
@@ -28,15 +27,6 @@ PRIME_SUBSCRIPTION_ID = "Prime"
 
 SUBSCRIPTION_ID_IN_LOGO = re.compile(r"/benefit-id/[^/]+/([^/]+)/logos/")
 """Where the benefit a title is offered under is written into its provider logo."""
-
-IMAGE_NAMES = {
-    "covershot": "covershot",
-    "packshot": "packshot",
-    "titleshot": "titleshot",
-    "heroshot": "heroshot",
-    "title_logo": "titleLogo",
-}
-"""The images a title carries, keyed by what each one is called."""
 
 CONTRIBUTOR_ROLES = ("cast", "directors", "producers")
 """The roles a title credits people in."""
@@ -118,8 +108,7 @@ def _header_fields(header: dict[str, Any]) -> dict[str, Any]:
         "release_year": number_or_none(header.get("releaseYear")),
         "duration": number_or_none(header.get("duration")),
         "runtime": text_or_none(header.get("runtime")),
-        "image_url": pick_image(header.get("images")),
-        "images": named_urls(header.get("images"), IMAGE_NAMES),
+        "images": images(header.get("images")),
         "genres": [
             str(mapping(genre)["text"])
             for genre in sequence(header.get("genres"))
@@ -390,7 +379,6 @@ def _title_card(entity: Any) -> dict[str, Any]:  # noqa: ANN401 - Any JSON value
     """Return one title as a row of titles lists it."""
     listed_title = mapping(entity)
     link_id = link_id_from_href(mapping(listed_title.get("link")).get("url"))
-    cover = mapping(mapping(listed_title.get("images")).get("cover"))
     maturity_rating_badge = mapping(listed_title.get("maturityRatingBadge"))
     return {
         "title_id": text_or_none(listed_title.get("titleID")),
@@ -401,7 +389,7 @@ def _title_card(entity: Any) -> dict[str, Any]:  # noqa: ANN401 - Any JSON value
         "entity_type": text_or_none(listed_title.get("entityType")),
         "release_year": text_or_none(listed_title.get("releaseYear")),
         "runtime": text_or_none(listed_title.get("runtime")),
-        "image_url": text_or_none(cover.get("url")),
+        "images": images(listed_title.get("images")),
         "maturity_rating": text_or_none(maturity_rating_badge.get("displayText")),
         "subscription_id": _subscription_id(listed_title),
     }

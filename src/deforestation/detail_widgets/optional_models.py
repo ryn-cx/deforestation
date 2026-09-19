@@ -1,7 +1,33 @@
-from typing import Any, Self
+from typing import Self
 from pydantic import ModelWrapValidatorHandler, PrivateAttr, model_validator
 from datetime import date
+from typing import Any
 from pydantic import BaseModel, ConfigDict
+
+class Images(BaseModel):
+    model_config = ConfigDict(extra='ignore', defer_build=True)
+    covershot: str | None = None
+    covershot_thumbnail: str | None = None
+    packshot: str | None = None
+    packshot_thumbnail: str | None = None
+    titleshot: str | None = None
+    titleshot_thumbnail: str | None = None
+    heroshot: Any | None = None
+    heroshot_thumbnail: Any | None = None
+    cover: Any | None = None
+    cover_thumbnail: Any | None = None
+    hero: Any | None = None
+    hero_thumbnail: Any | None = None
+    poster2x3: Any | None = None
+    poster2x3_thumbnail: Any | None = None
+    boxart: Any | None = None
+    boxart_thumbnail: Any | None = None
+    full_background_16x9: Any | None = None
+    full_background_16x9_thumbnail: Any | None = None
+    title_logo: Any | None = None
+    title_logo_thumbnail: Any | None = None
+    provider_logo: Any | None = None
+    provider_logo_thumbnail: Any | None = None
 
 class Episode(BaseModel):
     model_config = ConfigDict(extra='ignore', defer_build=True)
@@ -14,7 +40,7 @@ class Episode(BaseModel):
     duration: int | None = None
     runtime: str | None = None
     release_date: date | None = None
-    image_url: str | None = None
+    images: Images | None = None
     is_available: bool | None = None
     subscription_ids: list[str] | None = None
     purchasable: bool | None = None

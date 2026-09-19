@@ -11,8 +11,20 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Any
 
-IMAGE_PREFERENCE = ("covershot", "packshot", "titleshot", "heroshot")
-"""Which of a title's images stands for it, most wanted first."""
+IMAGE_NAMES = {
+    "covershot": "covershot",
+    "packshot": "packshot",
+    "titleshot": "titleshot",
+    "heroshot": "heroshot",
+    "cover": "cover",
+    "hero": "hero",
+    "poster2x3": "poster2x3",
+    "boxart": "boxart",
+    "full_background_16x9": "fullBackground16x9",
+    "title_logo": "titleLogo",
+    "provider_logo": "providerLogo",
+}
+"""The images a title carries, keyed by what each one is called."""
 
 RELEASE_DATE_FORMAT = "%b %d, %Y"
 """How a release date is written, e.g. `Jan 22, 1985`."""
@@ -95,20 +107,32 @@ def release_date(written_date: Any) -> str | None:  # noqa: ANN401 - Any JSON va
 
 
 # TODO: Validate
-def pick_image(images: Any) -> str | None:  # noqa: ANN401 - Any JSON value.
-    """Return the image that stands for a title, most wanted first."""
-    named_images = mapping(images)
-    for name in IMAGE_PREFERENCE:
-        if image_url := text_or_none(named_images.get(name)):
-            return image_url
-    return None
+def _image_url(image: Any) -> str | None:  # noqa: ANN401 - Any JSON value.
+    if isinstance(image, dict):
+        return text_or_none(image.get("url"))
+    return text_or_none(image)
 
 
 # TODO: Validate
-def named_urls(images: Any, names: dict[str, str]) -> dict[str, Any]:  # noqa: ANN401
-    """Return the images a title carries, keyed by what each one is called."""
-    named_images = mapping(images)
-    return {name: text_or_none(named_images.get(key)) for name, key in names.items()}
+def _thumbnail_url(url: str | None) -> str | None:
+    if not url:
+        return None
+    stem, dot, extension = url.rpartition(".")
+    if not dot or "/" in extension:
+        return None
+    joiner = "" if stem.endswith("_") else "._"
+    return f"{stem}{joiner}SX500_FMwebp_.{extension}"
+
+
+# TODO: Validate
+def images(raw_images: Any) -> dict[str, Any]:  # noqa: ANN401 - Any JSON value.
+    named_images = mapping(raw_images)
+    found: dict[str, Any] = {}
+    for name, key in IMAGE_NAMES.items():
+        url = _image_url(named_images.get(key))
+        found[name] = url
+        found[f"{name}_thumbnail"] = _thumbnail_url(url)
+    return found
 
 
 # TODO: Validate
@@ -153,7 +177,7 @@ def episode(
         "duration": number_or_none(episode_detail.get("duration")),
         "runtime": text_or_none(episode_detail.get("runtime")),
         "release_date": release_date(episode_detail.get("releaseDate")),
-        "image_url": pick_image(episode_detail.get("images")),
+        "images": images(episode_detail.get("images")),
         "is_available": available,
         "subscription_ids": offer_subscription_ids(action),
         "purchasable": offer_purchasable(action),

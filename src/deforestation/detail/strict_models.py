@@ -7,10 +7,27 @@ from pydantic import BaseModel
 class Images(BaseModel):
     model_config = ConfigDict(defer_build=True)
     covershot: str
+    covershot_thumbnail: str
     packshot: str
+    packshot_thumbnail: str
     titleshot: str
+    titleshot_thumbnail: str
     heroshot: str | None
+    heroshot_thumbnail: str | None
+    cover: None
+    cover_thumbnail: None
+    hero: None
+    hero_thumbnail: None
+    poster2x3: None
+    poster2x3_thumbnail: None
+    boxart: None
+    boxart_thumbnail: None
+    full_background_16x9: None
+    full_background_16x9_thumbnail: None
     title_logo: str | None
+    title_logo_thumbnail: str | None
+    provider_logo: str | None
+    provider_logo_thumbnail: str | None
 
 class Channel(BaseModel):
     model_config = ConfigDict(defer_build=True)
@@ -26,6 +43,31 @@ class Season(BaseModel):
     url: str
     is_selected: bool
 
+class Images1(BaseModel):
+    model_config = ConfigDict(defer_build=True)
+    covershot: str
+    covershot_thumbnail: str
+    packshot: str
+    packshot_thumbnail: str
+    titleshot: None
+    titleshot_thumbnail: None
+    heroshot: None
+    heroshot_thumbnail: None
+    cover: None
+    cover_thumbnail: None
+    hero: None
+    hero_thumbnail: None
+    poster2x3: None
+    poster2x3_thumbnail: None
+    boxart: None
+    boxart_thumbnail: None
+    full_background_16x9: None
+    full_background_16x9_thumbnail: None
+    title_logo: None
+    title_logo_thumbnail: None
+    provider_logo: None
+    provider_logo_thumbnail: None
+
 class Episode(BaseModel):
     model_config = ConfigDict(defer_build=True)
     key: str
@@ -37,7 +79,7 @@ class Episode(BaseModel):
     duration: int
     runtime: str
     release_date: date
-    image_url: str
+    images: Images1
     is_available: bool
     subscription_ids: list[str]
     purchasable: bool
@@ -47,6 +89,31 @@ class EpisodePage(BaseModel):
     token: str
     text: str
     is_selected: bool
+
+class Images2(BaseModel):
+    model_config = ConfigDict(defer_build=True)
+    covershot: None
+    covershot_thumbnail: None
+    packshot: None
+    packshot_thumbnail: None
+    titleshot: None
+    titleshot_thumbnail: None
+    heroshot: None
+    heroshot_thumbnail: None
+    cover: str | None
+    cover_thumbnail: str | None
+    hero: str | None
+    hero_thumbnail: str | None
+    poster2x3: str | None
+    poster2x3_thumbnail: str | None
+    boxart: None
+    boxart_thumbnail: None
+    full_background_16x9: None
+    full_background_16x9_thumbnail: None
+    title_logo: str | None
+    title_logo_thumbnail: str | None
+    provider_logo: None
+    provider_logo_thumbnail: None
 
 class Title(BaseModel):
     model_config = ConfigDict(defer_build=True)
@@ -58,7 +125,7 @@ class Title(BaseModel):
     entity_type: str
     release_year: str
     runtime: str | None
-    image_url: str | None
+    images: Images2
     maturity_rating: str
     subscription_id: str | None
 
@@ -84,7 +151,6 @@ class ParsedDetailModel(BaseModel):
     release_year: int
     duration: int | None
     runtime: str | None
-    image_url: str
     images: Images
     genres: list[str]
     studios: list[str]

@@ -4,6 +4,31 @@ from pydantic import ConfigDict
 from datetime import date
 from pydantic import BaseModel
 
+class Images(BaseModel):
+    model_config = ConfigDict(defer_build=True)
+    covershot: str
+    covershot_thumbnail: str
+    packshot: str
+    packshot_thumbnail: str
+    titleshot: str
+    titleshot_thumbnail: str
+    heroshot: None
+    heroshot_thumbnail: None
+    cover: None
+    cover_thumbnail: None
+    hero: None
+    hero_thumbnail: None
+    poster2x3: None
+    poster2x3_thumbnail: None
+    boxart: None
+    boxart_thumbnail: None
+    full_background_16x9: None
+    full_background_16x9_thumbnail: None
+    title_logo: None
+    title_logo_thumbnail: None
+    provider_logo: None
+    provider_logo_thumbnail: None
+
 class Episode(BaseModel):
     model_config = ConfigDict(defer_build=True)
     key: str
@@ -15,7 +40,7 @@ class Episode(BaseModel):
     duration: int
     runtime: str
     release_date: date
-    image_url: str
+    images: Images
     is_available: bool
     subscription_ids: list[str]
     purchasable: bool
