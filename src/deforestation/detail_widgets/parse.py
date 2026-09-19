@@ -39,6 +39,7 @@ def _episode(listed_episode: Any) -> dict[str, Any]:  # noqa: ANN401 - Any JSON 
         str(entry.get("titleID")),
         entry.get("detail"),
         mapping(entry.get("self")).get("compactGTI"),
+        entry.get("action"),
         available=bool(action_cards(entry.get("action"))),
     )
 

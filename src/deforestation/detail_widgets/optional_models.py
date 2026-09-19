@@ -16,6 +16,8 @@ class Episode(BaseModel):
     release_date: date | None = None
     image_url: str | None = None
     is_available: bool | None = None
+    subscription_ids: list[str] | None = None
+    purchasable: bool | None = None
 
 class EpisodePage(BaseModel):
     model_config = ConfigDict(extra='ignore', defer_build=True)

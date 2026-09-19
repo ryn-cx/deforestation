@@ -15,6 +15,7 @@ from deforestation.parsing import (
     mapping,
     named_urls,
     number_or_none,
+    offer_subscription_ids,
     pick_image,
     release_date,
     sequence,
@@ -22,10 +23,10 @@ from deforestation.parsing import (
     texts,
 )
 
-PRIME_BENEFIT_ID = "Prime"
+PRIME_SUBSCRIPTION_ID = "Prime"
 """The benefit a title included with Prime is offered under."""
 
-BENEFIT_ID_IN_LOGO = re.compile(r"/benefit-id/[^/]+/([^/]+)/logos/")
+SUBSCRIPTION_ID_IN_LOGO = re.compile(r"/benefit-id/[^/]+/([^/]+)/logos/")
 """Where the benefit a title is offered under is written into its provider logo."""
 
 IMAGE_NAMES = {
@@ -68,6 +69,7 @@ def parse_detail(page: Any) -> dict[str, Any]:  # noqa: ANN401 - Any JSON value.
         "imdb_rating": _imdb_rating(atf_state, page_id),
         "moods": _moods(atf_state, page_id),
         "included_with_prime": _included_with_prime(offer_cards),
+        "free_with_ads": _free_with_ads(atf_state, page_id),
         "purchasable": _purchasable(offer_cards),
         "unavailable_message": _unavailable_message(atf_state, page_id, offer_cards),
         "channels": _channels(offer_cards),
@@ -205,6 +207,7 @@ def _episodes(btf_state: dict[str, Any]) -> list[dict[str, Any]]:
             str(episode_key),
             episode_details[episode_key],
             mapping(link_ids.get(episode_key)).get("compactGTI"),
+            _episode_action(btf_state, str(episode_key)),
             available=_episode_available(btf_state, str(episode_key)),
         )
         for episode_key in sequence(episode_list.get("cardTitleIds"))
@@ -213,21 +216,33 @@ def _episodes(btf_state: dict[str, Any]) -> list[dict[str, Any]]:
 
 
 # TODO: Validate
+def _episode_action(btf_state: dict[str, Any], episode_key: str) -> Any:  # noqa: ANN401 - Any JSON value.
+    return mapping(mapping(btf_state.get("action")).get("btf")).get(episode_key)
+
+
+# TODO: Validate
 def _episode_available(btf_state: dict[str, Any], episode_key: str) -> bool:
     """Report whether the episode is offered a way to watch it."""
-    episode_action = mapping(mapping(btf_state.get("action")).get("btf")).get(
-        episode_key,
-    )
+    episode_action = _episode_action(btf_state, episode_key)
     if not episode_action:
         return True
     return any(mapping(card).get("actions") for card in action_cards(episode_action))
 
 
 # TODO: Validate
+def _atf_action(atf_state: dict[str, Any], page_id: str) -> Any:  # noqa: ANN401 - Any JSON value.
+    return mapping(mapping(atf_state.get("action")).get("atf")).get(page_id)
+
+
+# TODO: Validate
 def _offer_cards(atf_state: dict[str, Any], page_id: str) -> list[Any]:
     """Return every card the page offers a way to watch the title on."""
-    action = mapping(mapping(atf_state.get("action")).get("atf")).get(page_id)
-    return action_cards(action)
+    return action_cards(_atf_action(atf_state, page_id))
+
+
+# TODO: Validate
+def _free_with_ads(atf_state: dict[str, Any], page_id: str) -> bool:
+    return "freewithads" in offer_subscription_ids(_atf_action(atf_state, page_id))
 
 
 # TODO: Validate
@@ -245,7 +260,7 @@ def _offer_payloads(offer_cards: list[Any]) -> list[dict[str, Any]]:
 def _included_with_prime(offer_cards: list[Any]) -> bool:
     """Report whether a Prime subscription is enough to watch this title."""
     return any(
-        mapping(payload.get("subscription")).get("benefitId") == PRIME_BENEFIT_ID
+        mapping(payload.get("subscription")).get("benefitId") == PRIME_SUBSCRIPTION_ID
         for payload in _offer_payloads(offer_cards)
     )
 
@@ -265,7 +280,7 @@ def _unavailable_message(
     """Return why the title cannot be watched, when nothing offers it."""
     if _offer_payloads(offer_cards):
         return None
-    action = mapping(mapping(atf_state.get("action")).get("atf")).get(page_id)
+    action = _atf_action(atf_state, page_id)
     for listed_action in sequence(mapping(action).get("primaryActions")):
         primary_action = mapping(listed_action)
         if primary_action.get("actionType") != "MESSAGE":
@@ -290,15 +305,15 @@ def _channels(offer_cards: list[Any]) -> list[dict[str, Any]]:
             subscription = mapping(payload.get("subscription"))
             if not subscription:
                 continue
-            benefit_id = str(subscription.get("benefitId"))
-            if benefit_id == PRIME_BENEFIT_ID:
+            subscription_id = str(subscription.get("benefitId"))
+            if subscription_id == PRIME_SUBSCRIPTION_ID:
                 continue
             logo_url = _card_logo_url(card)
-            if channel := channels.get(benefit_id):
+            if channel := channels.get(subscription_id):
                 channel["logo_url"] = channel["logo_url"] or logo_url
                 continue
-            channels[benefit_id] = {
-                "benefit_id": benefit_id,
+            channels[subscription_id] = {
+                "subscription_id": subscription_id,
                 "name": _card_heading(card) or _channel_name(subscription.get("label")),
                 "logo_url": logo_url,
             }
@@ -388,18 +403,18 @@ def _title_card(entity: Any) -> dict[str, Any]:  # noqa: ANN401 - Any JSON value
         "runtime": text_or_none(listed_title.get("runtime")),
         "image_url": text_or_none(cover.get("url")),
         "maturity_rating": text_or_none(maturity_rating_badge.get("displayText")),
-        "benefit_id": _benefit_id(listed_title),
+        "subscription_id": _subscription_id(listed_title),
     }
 
 
 # TODO: Validate
-def _benefit_id(entity: Any) -> str | None:  # noqa: ANN401 - Any JSON value.
+def _subscription_id(entity: Any) -> str | None:  # noqa: ANN401 - Any JSON value.
     """Return the benefit a title is offered under, read off its provider logo."""
     cues = mapping(mapping(entity).get("entitlementCues"))
     logo_url = mapping(cues.get("providerLogo")).get("imageUrl")
     if not logo_url:
         return None
-    found = BENEFIT_ID_IN_LOGO.search(str(logo_url))
+    found = SUBSCRIPTION_ID_IN_LOGO.search(str(logo_url))
     return found[1] if found else None
 
 

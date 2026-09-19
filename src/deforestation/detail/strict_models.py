@@ -14,7 +14,7 @@ class Images(BaseModel):
 
 class Channel(BaseModel):
     model_config = ConfigDict(defer_build=True)
-    benefit_id: str
+    subscription_id: str
     name: str
     logo_url: str
 
@@ -39,6 +39,8 @@ class Episode(BaseModel):
     release_date: date
     image_url: str
     is_available: bool
+    subscription_ids: list[str]
+    purchasable: bool
 
 class EpisodePage(BaseModel):
     model_config = ConfigDict(defer_build=True)
@@ -58,7 +60,7 @@ class Title(BaseModel):
     runtime: str | None
     image_url: str | None
     maturity_rating: str
-    benefit_id: str | None
+    subscription_id: str | None
 
 class Container(BaseModel):
     model_config = ConfigDict(defer_build=True)
@@ -97,6 +99,7 @@ class ParsedDetailModel(BaseModel):
     imdb_rating: int | float | None
     moods: list[str]
     included_with_prime: bool
+    free_with_ads: bool
     purchasable: bool
     unavailable_message: str | None
     channels: list[Channel]

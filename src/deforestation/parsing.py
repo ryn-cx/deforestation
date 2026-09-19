@@ -136,6 +136,7 @@ def episode(
     episode_key: str,
     detail: Any,  # noqa: ANN401 - Any JSON value.
     compact_gti: Any,  # noqa: ANN401 - Any JSON value.
+    action: Any,  # noqa: ANN401 - Any JSON value.
     *,
     available: bool,
 ) -> dict[str, Any]:
@@ -154,6 +155,8 @@ def episode(
         "release_date": release_date(episode_detail.get("releaseDate")),
         "image_url": pick_image(episode_detail.get("images")),
         "is_available": available,
+        "subscription_ids": offer_subscription_ids(action),
+        "purchasable": offer_purchasable(action),
     }
 
 
@@ -167,3 +170,36 @@ def action_cards(action: Any) -> list[Any]:  # noqa: ANN401 - Any JSON value.
             cards.append(card)
         cards += sequence(payload.get("cardOptions"))
     return cards
+
+
+# TODO: Validate
+def offer_payloads(action: Any) -> list[dict[str, Any]]:  # noqa: ANN401 - Any JSON value.
+    payloads = [
+        mapping(mapping(option).get("payload"))
+        for card in action_cards(action)
+        for option in sequence(mapping(card).get("actions"))
+        if mapping(option).get("payload")
+    ]
+    payloads += [
+        mapping(mapping(listed_action).get("payload"))
+        for listed_key in ("primaryActions", "secondaryActions")
+        for listed_action in sequence(mapping(action).get(listed_key))
+        if mapping(listed_action).get("payload")
+    ]
+    return payloads
+
+
+# TODO: Validate
+def offer_subscription_ids(action: Any) -> list[str]:  # noqa: ANN401 - Any JSON value.
+    found = {
+        str(subscription_id)
+        for payload in offer_payloads(action)
+        for holder in (payload.get("subscription"), payload.get("playback"))
+        if (subscription_id := mapping(holder).get("benefitId"))
+    }
+    return sorted(found)
+
+
+# TODO: Validate
+def offer_purchasable(action: Any) -> bool:  # noqa: ANN401 - Any JSON value.
+    return any(payload.get("transaction") for payload in offer_payloads(action))

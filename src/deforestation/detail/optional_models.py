@@ -13,7 +13,7 @@ class Images(BaseModel):
 
 class Channel(BaseModel):
     model_config = ConfigDict(extra='ignore', defer_build=True)
-    benefit_id: str | None = None
+    subscription_id: str | None = None
     name: str | None = None
     logo_url: str | None = None
 
@@ -38,6 +38,8 @@ class Episode(BaseModel):
     release_date: date | None = None
     image_url: str | None = None
     is_available: bool | None = None
+    subscription_ids: list[str] | None = None
+    purchasable: bool | None = None
 
 class EpisodePage(BaseModel):
     model_config = ConfigDict(extra='ignore', defer_build=True)
@@ -57,7 +59,7 @@ class Title(BaseModel):
     runtime: str | None = None
     image_url: str | None = None
     maturity_rating: str | None = None
-    benefit_id: str | None = None
+    subscription_id: str | None = None
 
 class Container(BaseModel):
     model_config = ConfigDict(extra='ignore', defer_build=True)
@@ -96,6 +98,7 @@ class ParsedDetailModel(BaseModel):
     imdb_rating: int | float | None = None
     moods: list[str] | None = None
     included_with_prime: bool | None = None
+    free_with_ads: bool | None = None
     purchasable: bool | None = None
     unavailable_message: str | None = None
     channels: list[Channel] | None = None
