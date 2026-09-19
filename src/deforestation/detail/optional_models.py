@@ -106,8 +106,8 @@ class Images2(BaseModel):
     hero_thumbnail: str | None = None
     poster2x3: str | None = None
     poster2x3_thumbnail: str | None = None
-    boxart: Any | None = None
-    boxart_thumbnail: Any | None = None
+    boxart: str | None = None
+    boxart_thumbnail: str | None = None
     full_background_16x9: Any | None = None
     full_background_16x9_thumbnail: Any | None = None
     title_logo: str | None = None
@@ -147,7 +147,7 @@ class ParsedDetailModel(BaseModel):
     entity_type: str | None = None
     title_type: str | None = None
     season_number: int | None = None
-    release_date: date | None = None
+    release_date: Any | date | None = None
     release_year: int | None = None
     duration: int | None = None
     runtime: str | None = None

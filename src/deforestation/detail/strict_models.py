@@ -6,12 +6,12 @@ from pydantic import BaseModel
 
 class Images(BaseModel):
     model_config = ConfigDict(defer_build=True)
-    covershot: str
-    covershot_thumbnail: str
-    packshot: str
-    packshot_thumbnail: str
-    titleshot: str
-    titleshot_thumbnail: str
+    covershot: str | None
+    covershot_thumbnail: str | None
+    packshot: str | None
+    packshot_thumbnail: str | None
+    titleshot: str | None
+    titleshot_thumbnail: str | None
     heroshot: str | None
     heroshot_thumbnail: str | None
     cover: None
@@ -106,8 +106,8 @@ class Images2(BaseModel):
     hero_thumbnail: str | None
     poster2x3: str | None
     poster2x3_thumbnail: str | None
-    boxart: None
-    boxart_thumbnail: None
+    boxart: str | None
+    boxart_thumbnail: str | None
     full_background_16x9: None
     full_background_16x9_thumbnail: None
     title_logo: str | None
@@ -123,7 +123,7 @@ class Title(BaseModel):
     title: str
     synopsis: str
     entity_type: str
-    release_year: str
+    release_year: str | None
     runtime: str | None
     images: Images2
     maturity_rating: str
@@ -147,8 +147,8 @@ class ParsedDetailModel(BaseModel):
     entity_type: str
     title_type: str
     season_number: int | None
-    release_date: date
-    release_year: int
+    release_date: date | None
+    release_year: int | None
     duration: int | None
     runtime: str | None
     images: Images
