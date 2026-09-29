@@ -1,17 +1,18 @@
 from typing import Self
 from pydantic import ModelWrapValidatorHandler, PrivateAttr, model_validator
+from pydantic import Field
 from datetime import date
 from typing import Any
 from pydantic import BaseModel, ConfigDict
 
 class Images(BaseModel):
     model_config = ConfigDict(extra='ignore', defer_build=True)
-    covershot: str | None = None
-    covershot_thumbnail: str | None = None
-    packshot: str | None = None
-    packshot_thumbnail: str | None = None
-    titleshot: str | None = None
-    titleshot_thumbnail: str | None = None
+    covershot: str | Any = Field(default=None, union_mode='left_to_right')
+    covershot_thumbnail: str | Any = Field(default=None, union_mode='left_to_right')
+    packshot: str | Any = Field(default=None, union_mode='left_to_right')
+    packshot_thumbnail: str | Any = Field(default=None, union_mode='left_to_right')
+    titleshot: str | Any = Field(default=None, union_mode='left_to_right')
+    titleshot_thumbnail: str | Any = Field(default=None, union_mode='left_to_right')
     heroshot: Any | None = None
     heroshot_thumbnail: Any | None = None
     cover: Any | None = None
@@ -31,32 +32,32 @@ class Images(BaseModel):
 
 class Episode(BaseModel):
     model_config = ConfigDict(extra='ignore', defer_build=True)
-    key: str | None = None
-    link_id: str | None = None
-    url: str | None = None
-    title: str | None = None
-    episode_number: int | None = None
-    synopsis: str | None = None
-    duration: int | None = None
-    runtime: str | None = None
-    release_date: date | None = None
-    images: Images | None = None
-    is_available: bool | None = None
-    subscription_ids: list[str] | None = None
-    purchasable: bool | None = None
+    key: str | Any = Field(default=None, union_mode='left_to_right')
+    link_id: str | Any = Field(default=None, union_mode='left_to_right')
+    url: str | Any = Field(default=None, union_mode='left_to_right')
+    title: str | Any = Field(default=None, union_mode='left_to_right')
+    episode_number: int | Any = Field(default=None, union_mode='left_to_right')
+    synopsis: str | Any = Field(default=None, union_mode='left_to_right')
+    duration: int | Any = Field(default=None, union_mode='left_to_right')
+    runtime: str | Any = Field(default=None, union_mode='left_to_right')
+    release_date: date | Any = Field(default=None, union_mode='left_to_right')
+    images: Images | Any = Field(default=None, union_mode='left_to_right')
+    is_available: bool | Any = Field(default=None, union_mode='left_to_right')
+    subscription_ids: list[str] | Any = Field(default=None, union_mode='left_to_right')
+    purchasable: bool | Any = Field(default=None, union_mode='left_to_right')
 
 class EpisodePage(BaseModel):
     model_config = ConfigDict(extra='ignore', defer_build=True)
-    token: str | None = None
-    text: str | None = None
-    is_selected: bool | None = None
+    token: str | Any = Field(default=None, union_mode='left_to_right')
+    text: str | Any = Field(default=None, union_mode='left_to_right')
+    is_selected: bool | Any = Field(default=None, union_mode='left_to_right')
 
 class ParsedDetailWidgetsModel(BaseModel):
     model_config = ConfigDict(extra='ignore', defer_build=True)
-    header: str | None = None
-    episode_count: int | None = None
-    episodes: list[Episode] | None = None
-    episode_pages: list[EpisodePage] | None = None
+    header: str | Any = Field(default=None, union_mode='left_to_right')
+    episode_count: int | Any = Field(default=None, union_mode='left_to_right')
+    episodes: list[Episode] | Any = Field(default=None, union_mode='left_to_right')
+    episode_pages: list[EpisodePage] | Any = Field(default=None, union_mode='left_to_right')
     _raw_input: Any = PrivateAttr(default=None)
 
     @model_validator(mode='wrap')

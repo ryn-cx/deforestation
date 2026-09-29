@@ -1,17 +1,18 @@
 from typing import Any, Self
 from pydantic import ModelWrapValidatorHandler, PrivateAttr, model_validator
+from pydantic import Field
 from pydantic import BaseModel, ConfigDict
 
 class Suggestion(BaseModel):
     model_config = ConfigDict(extra='ignore', defer_build=True)
-    text: str | None = None
-    marked_up_text: str | None = None
-    query: str | None = None
-    url: str | None = None
+    text: str | Any = Field(default=None, union_mode='left_to_right')
+    marked_up_text: str | Any = Field(default=None, union_mode='left_to_right')
+    query: str | Any = Field(default=None, union_mode='left_to_right')
+    url: str | Any = Field(default=None, union_mode='left_to_right')
 
 class ParsedSearchSuggestionsModel(BaseModel):
     model_config = ConfigDict(extra='ignore', defer_build=True)
-    suggestions: list[Suggestion] | None = None
+    suggestions: list[Suggestion] | Any = Field(default=None, union_mode='left_to_right')
     _raw_input: Any = PrivateAttr(default=None)
 
     @model_validator(mode='wrap')
