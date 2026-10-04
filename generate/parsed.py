@@ -66,7 +66,9 @@ def _write_parsed_recordings(
     written: set[Path] = set()
 
     for recording in recording_paths(GENERATOR_PATHS.files_path, model_name):
-        parsed_path = parsed_directory / recording.name
+        is_walk = recording.parent.parent.name == "Multipages"
+        parsed_name = f"{recording.stem} all pages.json" if is_walk else recording.name
+        parsed_path = parsed_directory / parsed_name
         parsed_path.write_text(
             json.dumps(read(recording.read_text(encoding="utf-8")), indent=2) + "\n",
             encoding="utf-8",

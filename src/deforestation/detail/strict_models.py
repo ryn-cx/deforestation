@@ -49,8 +49,8 @@ class Images1(BaseModel):
     covershot_thumbnail: str
     packshot: str | None
     packshot_thumbnail: str | None
-    titleshot: None
-    titleshot_thumbnail: None
+    titleshot: str | None
+    titleshot_thumbnail: str | None
     heroshot: None
     heroshot_thumbnail: None
     cover: None

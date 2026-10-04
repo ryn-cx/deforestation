@@ -50,8 +50,8 @@ class Images1(BaseModel):
     covershot_thumbnail: str | Any = Field(default=None, union_mode='left_to_right')
     packshot: str | Any = Field(default=None, union_mode='left_to_right')
     packshot_thumbnail: str | Any = Field(default=None, union_mode='left_to_right')
-    titleshot: Any | None = None
-    titleshot_thumbnail: Any | None = None
+    titleshot: str | Any = Field(default=None, union_mode='left_to_right')
+    titleshot_thumbnail: str | Any = Field(default=None, union_mode='left_to_right')
     heroshot: Any | None = None
     heroshot_thumbnail: Any | None = None
     cover: Any | None = None
