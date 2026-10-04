@@ -22,8 +22,8 @@ class Images(BaseModel):
     poster2x3_thumbnail: None
     boxart: None
     boxart_thumbnail: None
-    full_background_16x9: None
-    full_background_16x9_thumbnail: None
+    full_background_16x9: str | None
+    full_background_16x9_thumbnail: str | None
     title_logo: str | None
     title_logo_thumbnail: str | None
     provider_logo: str | None
@@ -47,8 +47,8 @@ class Images1(BaseModel):
     model_config = ConfigDict(defer_build=True)
     covershot: str
     covershot_thumbnail: str
-    packshot: str
-    packshot_thumbnail: str
+    packshot: str | None
+    packshot_thumbnail: str | None
     titleshot: None
     titleshot_thumbnail: None
     heroshot: None
@@ -126,7 +126,7 @@ class Title(BaseModel):
     release_year: str | None
     runtime: str | None
     images: Images2
-    maturity_rating: str
+    maturity_rating: str | None
     subscription_id: str | None
 
 class Container(BaseModel):

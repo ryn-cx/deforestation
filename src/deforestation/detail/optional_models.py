@@ -23,8 +23,8 @@ class Images(BaseModel):
     poster2x3_thumbnail: Any | None = None
     boxart: Any | None = None
     boxart_thumbnail: Any | None = None
-    full_background_16x9: Any | None = None
-    full_background_16x9_thumbnail: Any | None = None
+    full_background_16x9: str | Any = Field(default=None, union_mode='left_to_right')
+    full_background_16x9_thumbnail: str | Any = Field(default=None, union_mode='left_to_right')
     title_logo: str | Any = Field(default=None, union_mode='left_to_right')
     title_logo_thumbnail: str | Any = Field(default=None, union_mode='left_to_right')
     provider_logo: str | Any = Field(default=None, union_mode='left_to_right')
