@@ -5,8 +5,8 @@ import logging
 from get_around import build_client_automatically
 from good_ass_pydantic_integrator.recordings import (
     RecordingId,
-    download_named_missing,
-    load_named_ids,
+    download_missing,
+    load_ids,
 )
 
 from deforestation import Deforestation
@@ -43,12 +43,12 @@ class DetailWidgetsId(RecordingId[Deforestation]):
         )
 
 
-WIDGET_REQUESTS = load_named_ids(GENERATOR_PATHS, MODEL_NAME, DetailWidgetsId)
+WIDGET_REQUESTS = load_ids(GENERATOR_PATHS, MODEL_NAME, DetailWidgetsId)
 
 
 # TODO: Validate
 def generate_detail_widgets(client: Deforestation) -> None:
-    download_named_missing(GENERATOR_PATHS, MODEL_NAME, WIDGET_REQUESTS, client)
+    download_missing(GENERATOR_PATHS, MODEL_NAME, WIDGET_REQUESTS, client)
     rebuild_parsed_model(MODEL_NAME, PARSED_MODEL_NAME, parse_detail_widgets)
 
 

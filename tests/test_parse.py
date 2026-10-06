@@ -102,7 +102,7 @@ def test_channels(client: Deforestation) -> None:
 # TODO: Validate
 def test_episode_list(client: Deforestation) -> None:
     widgets = client.detail_widgets.load(
-        recorded("DetailWidgetsModel", f"{SERIES_ID} episodes 25-33"),
+        recorded("DetailWidgetsModel", SERIES_ID),
     )
 
     assert widgets.episode_count == SEASON_EPISODE_COUNT
