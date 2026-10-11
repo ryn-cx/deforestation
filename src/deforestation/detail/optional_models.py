@@ -52,8 +52,8 @@ class Images1(BaseModel):
     packshot_thumbnail: str | Any = Field(default=None, union_mode='left_to_right')
     titleshot: str | Any = Field(default=None, union_mode='left_to_right')
     titleshot_thumbnail: str | Any = Field(default=None, union_mode='left_to_right')
-    heroshot: Any | None = None
-    heroshot_thumbnail: Any | None = None
+    heroshot: str | Any = Field(default=None, union_mode='left_to_right')
+    heroshot_thumbnail: str | Any = Field(default=None, union_mode='left_to_right')
     cover: Any | None = None
     cover_thumbnail: Any | None = None
     hero: Any | None = None
@@ -109,12 +109,12 @@ class Images2(BaseModel):
     poster2x3_thumbnail: str | Any = Field(default=None, union_mode='left_to_right')
     boxart: str | Any = Field(default=None, union_mode='left_to_right')
     boxart_thumbnail: str | Any = Field(default=None, union_mode='left_to_right')
-    full_background_16x9: Any | None = None
-    full_background_16x9_thumbnail: Any | None = None
+    full_background_16x9: str | Any = Field(default=None, union_mode='left_to_right')
+    full_background_16x9_thumbnail: str | Any = Field(default=None, union_mode='left_to_right')
     title_logo: str | Any = Field(default=None, union_mode='left_to_right')
     title_logo_thumbnail: str | Any = Field(default=None, union_mode='left_to_right')
-    provider_logo: Any | None = None
-    provider_logo_thumbnail: Any | None = None
+    provider_logo: str | Any = Field(default=None, union_mode='left_to_right')
+    provider_logo_thumbnail: str | Any = Field(default=None, union_mode='left_to_right')
 
 class Title(BaseModel):
     model_config = ConfigDict(extra='ignore', defer_build=True)

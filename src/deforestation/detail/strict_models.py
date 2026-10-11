@@ -45,14 +45,14 @@ class Season(BaseModel):
 
 class Images1(BaseModel):
     model_config = ConfigDict(defer_build=True)
-    covershot: str
-    covershot_thumbnail: str
+    covershot: str | None
+    covershot_thumbnail: str | None
     packshot: str | None
     packshot_thumbnail: str | None
     titleshot: str | None
     titleshot_thumbnail: str | None
-    heroshot: None
-    heroshot_thumbnail: None
+    heroshot: str | None
+    heroshot_thumbnail: str | None
     cover: None
     cover_thumbnail: None
     hero: None
@@ -76,9 +76,9 @@ class Episode(BaseModel):
     title: str
     episode_number: int
     synopsis: str
-    duration: int
-    runtime: str
-    release_date: date
+    duration: int | None
+    runtime: str | None
+    release_date: date | None
     images: Images1
     is_available: bool
     subscription_ids: list[str]
@@ -108,12 +108,12 @@ class Images2(BaseModel):
     poster2x3_thumbnail: str | None
     boxart: str | None
     boxart_thumbnail: str | None
-    full_background_16x9: None
-    full_background_16x9_thumbnail: None
+    full_background_16x9: str | None
+    full_background_16x9_thumbnail: str | None
     title_logo: str | None
     title_logo_thumbnail: str | None
-    provider_logo: None
-    provider_logo_thumbnail: None
+    provider_logo: str | None
+    provider_logo_thumbnail: str | None
 
 class Title(BaseModel):
     model_config = ConfigDict(defer_build=True)
@@ -159,7 +159,7 @@ class ParsedDetailModel(BaseModel):
     producers: list[str]
     audio_tracks: list[str]
     subtitles: list[str]
-    maturity_rating: str
+    maturity_rating: str | None
     amazon_rating: int | float | None
     amazon_rating_count: int | None
     imdb_rating: int | float | None
